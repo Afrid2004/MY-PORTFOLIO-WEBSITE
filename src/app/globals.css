@@ -1,26 +1,71 @@
 @import "tailwindcss";
+@plugin "daisyui";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@plugin "daisyui/theme" {
+  name: "portfolio-dark";
+  default: true;
+  prefersdark: true;
+
+  /* Brand */
+  --color-primary: #dbff00;
+  --color-primary-content: #00152e;
+  --color-secondary: #0a3d62;
+  --color-secondary-content: #f8fafc;
+  --color-accent: #00c2a8;
+  --color-accent-content: #00152e;
+
+  /* Base */
+  --color-base-100: #00152e;
+  --color-base-200: #062241;
+  --color-base-300: #0c2d52;
+  --color-base-content: #f8fafc;
+
+  /* Neutral */
+  --color-neutral: #12385a;
+  --color-neutral-content: #f8fafc;
+
+  /* Feedback */
+  --color-info: #38bdf8;
+  --color-success: #22c55e;
+  --color-warning: #facc15;
+  --color-error: #ef4444;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@custom-variant dark (&:where([data-theme=portfolio-dark], [data-theme=portfolio-dark] *));
+
+@utility container {
+  @apply mx-auto w-full
+        px-4 sm:px-0
+        max-w-sm
+        sm:max-w-xl
+        md:max-w-3xl
+        lg:max-w-5xl
+        xl:max-w-6xl
+        2xl:max-w-[1440px];
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@utility gradient-border {
+  @apply relative rounded-3xl p-px overflow-hidden;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.08) 18%,
+    rgba(255, 255, 255, 0.02) 50%,
+    rgba(255, 255, 255, 0.08) 82%,
+    rgba(255, 255, 255, 0.16) 100%
+  );
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@utility card-glow {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+@utility surface {
+  @apply bg-base-200 rounded-[calc(theme(borderRadius.3xl)-1px)];
+}
+
+@theme {
+  --color-primary-hover: #c2e600;
 }
