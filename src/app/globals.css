@@ -68,3 +68,16 @@
 @theme {
   --color-primary-hover: #c2e600;
 }
+
+@utility hover-underline {
+  @apply relative inline-block;
+
+  &::after {
+    content: "";
+    @apply absolute left-0 -bottom-1 h-0.5 w-full bg-primary origin-left scale-x-0 transition-transform duration-300 ease-out;
+  }
+
+  &:hover::after {
+    @apply scale-x-100;
+  }
+}

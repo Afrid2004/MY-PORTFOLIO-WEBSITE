@@ -54,14 +54,14 @@ const Navbar = () => {
         <div className="container">
           <div className="relative my-5" ref={menuRef}>
             <div>
-              <div className="flex items-center justify-between pr-3 px-6 py-3 bg-base-200 rounded-4xl border border-secondary">
+              <div className="flex items-center justify-between pr-3 px-6 py-3 bg-base-200 rounded-[9999px] border border-secondary">
                 <div className="w-40">
                   <Logo></Logo>
                 </div>
                 {/* desktop navigation menus  */}
                 <nav>
                   <div className="flex items-center gap-1">
-                    <ul className=" items-center text-lg gap-1 hidden md:flex">
+                    <ul className=" items-center gap-1 hidden md:flex">
                       {menus}
                     </ul>
                     {/* menu bar */}
@@ -95,9 +95,7 @@ const Navbar = () => {
             <div
               className={`absolute p-3 w-full bg-base-200 rounded-2xl border border-secondary right-0 top-[calc(100%+1rem)] transform origin-top-right transition-all duration-150 ${menu ? "opacity-100 pointer-events-auto translate-y-0" : "opacity-0 pointer-events-none scale-95 -translate-y-2"}`}
             >
-              <ul className="flex flex-col text-lg gap-1 w-full h-full">
-                {menus}
-              </ul>
+              <ul className="flex flex-col  gap-1 w-full h-full">{menus}</ul>
             </div>
           </div>
         </div>
