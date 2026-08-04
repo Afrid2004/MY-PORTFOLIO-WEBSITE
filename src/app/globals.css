@@ -8,16 +8,16 @@
 
   /* Brand */
   --color-primary: #dbff00;
-  --color-primary-content: #00152e;
-  --color-secondary: #0a3d62;
+  --color-primary-content: #000c1a;
+  --color-secondary: #052033;
   --color-secondary-content: #f8fafc;
   --color-accent: #00c2a8;
-  --color-accent-content: #00152e;
+  --color-accent-content: #000f20;
 
   /* Base */
-  --color-base-100: #00152e;
-  --color-base-200: #062241;
-  --color-base-300: #0c2d52;
+  --color-base-100: #000f20;
+  --color-base-200: #001324;
+  --color-base-300: #062241;
   --color-base-content: #f8fafc;
 
   /* Neutral */
@@ -35,10 +35,9 @@
 
 @utility container {
   @apply mx-auto w-full
-        px-4 sm:px-0
-        max-w-sm
+        px-4 sm:px-6
         sm:max-w-xl
-        md:max-w-3xl
+        md:max-w-3xl md:px-0
         lg:max-w-5xl
         xl:max-w-6xl
         2xl:max-w-[1440px];
