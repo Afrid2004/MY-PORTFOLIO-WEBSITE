@@ -1,10 +1,11 @@
 "use client";
 
+import BookMeeting from "@/components/Buttons/BookMeeting";
 import Logo from "@/components/Logo/Logo";
 import Image from "next/image";
 import Link from "next/link";
 import { FaGithub, FaLinkedin, FaFacebook, FaArrowUp } from "react-icons/fa6";
-import { FiArrowRight, FiChevronRight } from "react-icons/fi";
+import { FiArrowRight, FiChevronRight, FiMail } from "react-icons/fi";
 import { HiOutlineEnvelope } from "react-icons/hi2";
 
 const Footer = () => {
@@ -25,7 +26,7 @@ const Footer = () => {
           <div className="container py-16">
             {/* CTA */}
             <div className="text-center max-w-5xl mx-auto">
-              <h2 className="text-4xl md:text-8xl font-bold">
+              <h2 className="text-4xl md:text-7xl lg:text-8xl font-bold">
                 Let's Build Something{" "}
                 <span className="text-primary">Amazing</span>
               </h2>
@@ -36,24 +37,19 @@ const Footer = () => {
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+                <BookMeeting />
                 <Link
-                  href="/contact"
-                  className="btn btn-primary rounded-full px-8"
+                  href="mailto:mdfaisalafrid@gmail.com"
+                  className="rounded-full px-8 py-4 border-2 border-primary font-medium text-primary hover:bg-primary hover:text-secondary duration-150 flex items-center justify-center gap-2"
                 >
-                  Hire Me
-                </Link>
-
-                <Link
-                  href="/resume.pdf"
-                  className="btn btn-outline rounded-full px-8"
-                >
-                  Download Resume
+                  <FiMail size={17} />
+                  <span className="leading-none">Contact Me</span>
                 </Link>
               </div>
             </div>
 
             {/* Divider */}
-            <div className="my-14" />
+            <div className="my-16 h-px bg-linear-to-r from-transparent via-gray-600 to-transparent" />
 
             {/* Footer Grid */}
             <div className="grid gap-10 md:grid-cols-3">
@@ -188,15 +184,17 @@ const Footer = () => {
               </div>
             </div>
 
+            <div className="mt-16 h-px bg-linear-to-r from-transparent via-gray-600 to-transparent" />
+
             {/* Bottom */}
-            <div className="mt-16 pt-6  flex flex-col md:flex-row items-center justify-between gap-5">
-              <p className="text-sm text-base-content/60">
+            <div className=" pt-6  flex flex-col md:flex-row items-center justify-between gap-5">
+              <p className="text-sm">
                 © {new Date().getFullYear()} Faisal Afrid. All rights reserved.
               </p>
 
               <button
                 onClick={scrollToTop}
-                className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
+                className="flex items-center gap-2 text-sm bg-base-100 px-4 py-2 rounded-4xl hover:bg-primary hover:text-secondary transition-colors border border-base-300"
               >
                 Back to Top
                 <FaArrowUp />
@@ -204,12 +202,11 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className="absolute bottom-0 left-0">
+          <div className="absolute bottom-0 left-0 pointer-events-none select-none">
             <Image
               src={"/assets/images/blur.png"}
-              className="pointer-events-none select-none"
               draggable={false}
-              width={1200}
+              width={1300}
               height={1200}
             />
           </div>

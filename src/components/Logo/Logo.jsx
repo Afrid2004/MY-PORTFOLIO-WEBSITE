@@ -10,6 +10,7 @@ const Logo = () => {
           className="w-full object-cover"
           width={1000}
           height={1000}
+          alt="Faisal"
           src={"/assets/images/logo.png"}
         />
       </Link>
