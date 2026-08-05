@@ -17,7 +17,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="mt-24">
+    <footer>
       {/* Gradient Top Border */}
       <div className="h-px w-full bg-linear-to-r from-transparent via-gray-400 to-transparent" />
 

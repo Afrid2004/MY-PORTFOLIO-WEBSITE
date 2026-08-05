@@ -31,13 +31,17 @@
   --color-error: #ef4444;
 }
 
+body {
+  overflow-x: hidden;
+}
+
 @custom-variant dark (&:where([data-theme=portfolio-dark], [data-theme=portfolio-dark] *));
 
 @utility container {
   @apply mx-auto w-full
         px-4 sm:px-6
         sm:max-w-xl
-        md:max-w-3xl md:px-0
+        md:max-w-3xl
         lg:max-w-5xl
         xl:max-w-6xl
         2xl:max-w-[1440px];
@@ -62,7 +66,7 @@
 }
 
 @utility surface {
-  @apply bg-base-200 rounded-[calc(theme(borderRadius.3xl)-1px)];
+  @apply bg-base-200 rounded-[calc(var(--radius-3xl)-1px)];
 }
 
 @theme {

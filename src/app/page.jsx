@@ -1,9 +1,11 @@
+import Hero from "@/components/pages/Home/Hero";
 import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="container">
-      <h1>Hello world</h1>
+    <div>
+      {/* hero section  */}
+      <Hero></Hero>
     </div>
   );
 }
