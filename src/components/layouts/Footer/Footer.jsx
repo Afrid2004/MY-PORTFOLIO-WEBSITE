@@ -21,7 +21,7 @@ const Footer = () => {
       {/* Gradient Top Border */}
       <div className="h-px w-full bg-linear-to-r from-transparent via-gray-400 to-transparent" />
 
-      <div className=" bg-no-repeat bg-cover bg-center">
+      <div>
         <div className=" bg-base-200/70 relative overflow-hidden">
           <div className="container py-16">
             {/* CTA */}
@@ -202,12 +202,16 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className="absolute bottom-0 left-0 pointer-events-none select-none">
-            <Image
-              src={"/assets/images/blur.png"}
-              draggable={false}
-              width={1300}
-              height={1200}
+          <div className="absolute -bottom-50 -left-10 md:-left-60 lg:-left-80 pointer-events-none select-none">
+            <div
+              className="
+      w-75 h-75
+      md:w-[550px] md:h-[550px]
+      lg:w-[800px] lg:h-[800px]
+      rounded-full
+      blur-[100px] md:blur-[140px]
+      bg-[radial-gradient(circle,#209181_0%,transparent_70%)]
+    "
             />
           </div>
         </div>

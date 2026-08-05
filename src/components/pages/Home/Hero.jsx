@@ -71,11 +71,13 @@ const Hero = () => {
             </div>
             <div className="col-span-12 lg:col-span-5">
               <div className="h-full w-full flex items-end justify-center">
-                <div className="w-fit translate-y-6">
+                <div className="w-fit 2xl:translate-y-6">
                   <Image
-                    src={"/assets/images/faisal2.png"}
+                    src={"/assets/images/faisalfreelancer.png"}
+                    className="md:w-150 lg:w-auto"
                     width={696}
                     height={604}
+                    alt="faisal"
                   />
                 </div>
               </div>
@@ -96,10 +98,11 @@ const Hero = () => {
         />
       </div>
 
-      <div className="absolute bottom-0 -right-10 pointer-events-none select-none">
+      <div className="absolute bottom-0 right-10 pointer-events-none select-none -z-1">
         <div
           className="
-      w-100 h-100
+          w-75 h-75
+      md:w-100 md:h-100
       
       rounded-full
       blur-[100px] md:blur-[140px]
