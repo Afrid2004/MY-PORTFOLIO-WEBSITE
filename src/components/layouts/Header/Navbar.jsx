@@ -7,6 +7,8 @@ import { FiMenu, FiX } from "react-icons/fi";
 const Navbar = () => {
   const [menu, setMenu] = useState(false);
   const menuRef = useRef(null);
+  const [showNavbar, setShowNavbar] = useState(true);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     const resize = () => {
@@ -20,13 +22,28 @@ const Navbar = () => {
         setMenu(false);
       }
     }
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY < 20) {
+        setShowNavbar(true);
+      } else {
+        if (currentScrollY > lastScrollY.current) {
+          setShowNavbar(false);
+        } else {
+          setShowNavbar(true);
+        }
+      }
+      lastScrollY.current = currentScrollY;
+    };
 
+    window.addEventListener("scroll", handleScroll);
     document.addEventListener("mousedown", handleClickOutside);
     window.addEventListener("resize", resize);
 
     return () => {
       window.removeEventListener("resize", resize);
       document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
   const menus = (
@@ -50,7 +67,18 @@ const Navbar = () => {
   );
   return (
     <div>
-      <header>
+      <header
+        className={`
+    fixed
+    top-0
+    left-0
+    w-full
+    z-50
+    transition-all
+    duration-500
+    ${showNavbar ? "translate-y-0 " : "-translate-y-full"}
+  `}
+      >
         <div className="container">
           <div className="relative my-5" ref={menuRef}>
             <div>
