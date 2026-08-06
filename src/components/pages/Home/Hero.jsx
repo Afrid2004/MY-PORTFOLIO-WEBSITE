@@ -70,11 +70,10 @@ const Hero = () => {
               </div>
             </div>
             <div className="col-span-12 lg:col-span-5">
-              <div className="h-full w-full flex items-end justify-center">
+              <div className="h-full w-full flex items-center justify-center">
                 <div className="w-fit 2xl:translate-y-6">
                   <Image
                     src={"/assets/images/faisalfreelancer.png"}
-                    className="md:w-150 lg:w-auto"
                     width={696}
                     height={604}
                     alt="faisal"
@@ -85,7 +84,7 @@ const Hero = () => {
           </div>
         </div>
       </div>
-      <div className="absolute top-20 -left-10 md:-left-60 lg:-left-80 pointer-events-none select-none">
+      <div className="absolute top-20 -left-10 md:-left-60 lg:-left-80 pointer-events-none select-none -z-1">
         <div
           className="
       w-75 h-75

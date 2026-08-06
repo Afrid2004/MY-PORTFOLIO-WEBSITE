@@ -8,62 +8,73 @@ const About = () => {
     <section className="relative py-16 lg:py-28 overflow-hidden">
       <div className="container">
         <div className="grid grid-cols-12 lg:gap-16">
-          <div className="col-span-12 lg:col-span-5 lg:h-full mt-5 lg:mt-0 order-2 lg:order-0">
-            <div className="w-full h-full">
-              <div className="gradient-border rounded-sm p-0.5 h-full">
-                <div className="bg-base-100 p-4 h-full">
-                  <div>
-                    <div className="gradient-border bg-base-100 rounded-sm p-px">
-                      <div className="bg-base-100 rounded-sm overflow-hidden">
-                        <Image
-                          src="/assets/images/faisalimage.png"
-                          alt="Faisal"
-                          width={600}
-                          height={600}
-                          className="w-full h-[450px] md:h-[600px] lg:h-[450px] object-cover object-top"
-                        />
-                      </div>
-                    </div>
+          <div className="col-span-12 lg:col-span-5 order-2 lg:order-0 mt-8 lg:mt-0">
+            <div className="gradient-border rounded-sm p-px gradient-borders">
+              <div className="bg-base-100 rounded-sm p-6">
+                {/* Image */}
+                <div className="relative overflow-hidden rounded-sm border border-white/10">
+                  <Image
+                    src="/assets/images/faisalimage.png"
+                    alt="Faisal"
+                    width={600}
+                    height={600}
+                    className="w-full h-[400px] object-cover object-top transition duration-700 hover:scale-105"
+                  />
 
-                    <div className="shrink-0">
-                      <div className="mt-5 text-center">
-                        <h3 className="text-xl font-semibold">
-                          MD Faisal Yousuf Afrid
-                        </h3>
-
-                        <p className="mt-1 text-sm text-base-content/60">
-                          Junior Full Stack Developer
-                        </p>
-                      </div>
-
-                      <div className="mt-5 flex justify-center gap-3">
-                        <a
-                          href="#"
-                          className="w-11 h-11 rounded-full border-2 border-white/10 flex items-center justify-center hover:border-primary hover:text-primary hover:-translate-y-1 transition-all"
-                        >
-                          <FaGithub size={18} />
-                        </a>
-                        <a
-                          href="#"
-                          className="w-11 h-11 rounded-full border-2 border-white/10 flex items-center justify-center hover:border-primary hover:text-primary hover:-translate-y-1 transition-all"
-                        >
-                          <FaLinkedin size={18} />
-                        </a>
-                        <a
-                          href="#"
-                          className="w-11 h-11 rounded-full border-2 border-white/10 flex items-center justify-center hover:border-primary hover:text-primary hover:-translate-y-1 transition-all"
-                        >
-                          <FaFacebook size={18} />
-                        </a>
-                        <a
-                          href="#"
-                          className="w-11 h-11 rounded-full border-2 border-white/10 flex items-center justify-center hover:border-primary hover:text-primary hover:-translate-y-1 transition-all"
-                        >
-                          <HiOutlineEnvelope size={18} />
-                        </a>
-                      </div>
+                  {/* Status */}
+                  <div className="absolute top-4 left-4">
+                    <div className="flex items-center gap-2 rounded-full bg-base-100/80 backdrop-blur-md px-3 py-1.5 border border-primary/20">
+                      <span className="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+                      <span className="text-xs font-medium">
+                        Available for Work
+                      </span>
                     </div>
                   </div>
+                </div>
+
+                {/* Info */}
+                <div className="mt-7 text-center">
+                  <h3 className="text-2xl font-semibold">
+                    MD Faisal Yousuf Afrid
+                  </h3>
+
+                  <p className="mt-2 text-base-content/60">
+                    Junior Full Stack Developer
+                  </p>
+                </div>
+
+                {/* Divider */}
+                <div className="my-6 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+
+                {/* Social */}
+                <div className="flex justify-center gap-4">
+                  <a
+                    href="#"
+                    className="group flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-base-200 hover:bg-primary hover:text-black hover:border-primary transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <FaGithub size={20} />
+                  </a>
+
+                  <a
+                    href="#"
+                    className="group flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-base-200 hover:bg-primary hover:text-black hover:border-primary transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <FaLinkedin size={20} />
+                  </a>
+
+                  <a
+                    href="#"
+                    className="group flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-base-200 hover:bg-primary hover:text-black hover:border-primary transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <FaFacebook size={20} />
+                  </a>
+
+                  <a
+                    href="#"
+                    className="group flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-base-200 hover:bg-primary hover:text-black hover:border-primary transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <HiOutlineEnvelope size={20} />
+                  </a>
                 </div>
               </div>
             </div>

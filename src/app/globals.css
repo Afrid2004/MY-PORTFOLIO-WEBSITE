@@ -35,6 +35,39 @@ body {
   overflow-x: hidden;
 }
 
+.gradient-borders {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.gradient-borders::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.12) 20%,
+    transparent 45%,
+    transparent 60%,
+    rgba(0, 194, 168, 0.45) 80%,
+    #00c2a8 100%
+  );
+
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  pointer-events: none;
+}
+
 @custom-variant dark (&:where([data-theme=portfolio-dark], [data-theme=portfolio-dark] *));
 
 @utility container {

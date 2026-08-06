@@ -26,7 +26,7 @@ const Footer = () => {
           <div className="container py-16">
             {/* CTA */}
             <div className="text-center max-w-5xl mx-auto">
-              <h2 className="text-4xl md:text-7xl lg:text-8xl font-bold">
+              <h2 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold">
                 Let's Build Something{" "}
                 <span className="text-primary">Amazing</span>
               </h2>
