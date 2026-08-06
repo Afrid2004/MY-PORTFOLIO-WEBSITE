@@ -84,6 +84,7 @@ const Hero = () => {
           </div>
         </div>
       </div>
+
       <div className="absolute top-20 -left-10 md:-left-60 lg:-left-80 pointer-events-none select-none -z-1">
         <div
           className="
@@ -110,7 +111,7 @@ const Hero = () => {
         />
       </div>
 
-      <div className="absolute inset-0 -z-10">
+      {/* <div className="absolute inset-0 -z-10">
         <div
           className="w-full h-full opacity-[0.5]"
           style={{
@@ -121,7 +122,7 @@ const Hero = () => {
             backgroundSize: "60px 60px",
           }}
         />
-      </div>
+      </div> */}
     </div>
   );
 };

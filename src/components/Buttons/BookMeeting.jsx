@@ -14,7 +14,7 @@ export default function BookMeeting() {
   }, []);
   return (
     <button
-      className="px-8 py-4 bg-primary text-secondary rounded-4xl font-medium hover:bg-transparent hover:text-primary hover:border-primary border-2 border-primary duration-150 cursor-pointer flex items-center justify-center gap-2 leading-none"
+      className="px-8 py-4 bg-primary text-secondary rounded-4xl font-medium hover:bg-transparent hover:text-primary hover:border-primary border-2 border-primary duration-150 cursor-pointer flex items-center justify-center gap-2 leading-none duration-300"
       data-cal-namespace="portfolio-meeting"
       data-cal-link="faisal-yousuf-afrid-hogc6f/portfolio-meeting"
       data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'

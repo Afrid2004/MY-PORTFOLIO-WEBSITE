@@ -1,18 +1,24 @@
+"use client";
 import Image from "next/image";
 import { FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa6";
 import { FiAward, FiCheck, FiMail, FiMapPin, FiUser } from "react-icons/fi";
 import { HiOutlineEnvelope } from "react-icons/hi2";
 
 const About = () => {
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    e.currentTarget.style.setProperty("--x", `${x}px`);
+  };
   return (
     <section className="relative py-16 lg:py-28 overflow-hidden">
       <div className="container">
         <div className="grid grid-cols-12 lg:gap-16">
           <div className="col-span-12 lg:col-span-5 order-2 lg:order-0 mt-8 lg:mt-0">
-            <div className="gradient-border rounded-sm p-px gradient-borders">
-              <div className="bg-base-100 rounded-sm p-6">
+            <div className="bg-white/2  rounded-2xl p-px gradient-borders">
+              <div className="rounded-sm p-6">
                 {/* Image */}
-                <div className="relative overflow-hidden rounded-sm border border-white/10">
+                <div className="relative overflow-hidden rounded-xl border border-white/10">
                   <Image
                     src="/assets/images/faisalimage.png"
                     alt="Faisal"
@@ -107,37 +113,45 @@ const About = () => {
 
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="gradient-border p-0.5 rounded-sm h-full">
-                  <div className="bg-base-100 p-5 rounded-sm h-full">
+                <div
+                  onMouseMove={handleMouseMove}
+                  className="card-hover bg-white/5 border border-white/10 p-5 rounded-2xl h-full relative overflow-hidden"
+                >
+                  <div>
                     <div className="flex items-center gap-2 text-primary mb-2">
                       <FiUser className="shrink-0" /> Name
                     </div>
                     <div>Muhammed Faisal Yousuf Afrid</div>
                   </div>
                 </div>
-                <div className="gradient-border p-0.5 rounded-sm h-full">
-                  <div className="bg-base-100 p-5 rounded-sm h-full">
+                <div
+                  onMouseMove={handleMouseMove}
+                  className="card-hover bg-white/5 border border-white/10 p-5 rounded-2xl h-full relative overflow-hidden"
+                >
+                  <div>
                     <div className="flex items-center gap-2 text-primary mb-2">
                       <FiMail className="shrink-0" /> Email
                     </div>
                     <div>mdfaisalafrid@gmail.com</div>
                   </div>
                 </div>
-                <div className="gradient-border p-0.5 rounded-sm h-full">
-                  <div className="bg-base-100 p-5 rounded-sm h-full">
-                    <div className="flex items-center gap-2 text-primary mb-2">
-                      <FiMapPin className="shrink-0" /> Location
-                    </div>
-                    <div>Merul Badda, Gulshan, Dhaka-1212</div>
+                <div
+                  onMouseMove={handleMouseMove}
+                  className="card-hover bg-white/5 border border-white/10 p-5 rounded-2xl h-full"
+                >
+                  <div className="flex items-center gap-2 text-primary mb-2">
+                    <FiMapPin className="shrink-0" /> Location
                   </div>
+                  <div>Merul Badda, Gulshan, Dhaka-1212</div>
                 </div>
-                <div className="gradient-border p-0.5 rounded-sm h-full">
-                  <div className="bg-base-100 p-5 rounded-sm h-full">
-                    <div className="flex items-center gap-2 text-primary mb-2">
-                      <FiCheck className="shrink-0" /> Availability
-                    </div>
-                    <div>Open to work</div>
+                <div
+                  onMouseMove={handleMouseMove}
+                  className="card-hover bg-white/5 border border-white/10 p-5 rounded-2xl h-full"
+                >
+                  <div className="flex items-center gap-2 text-primary mb-2">
+                    <FiCheck className="shrink-0" /> Availability
                   </div>
+                  <div>Open to work</div>
                 </div>
               </div>
             </div>

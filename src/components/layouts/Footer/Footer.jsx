@@ -40,7 +40,7 @@ const Footer = () => {
                 <BookMeeting />
                 <Link
                   href="mailto:mdfaisalafrid@gmail.com"
-                  className="rounded-full px-8 py-4 border-2 border-primary font-medium text-primary hover:bg-primary hover:text-secondary duration-150 flex items-center justify-center gap-2"
+                  className="inline-flex items-center gap-3 rounded-full border-2 border-white/15 bg-transparent px-6 py-3 font-medium text-base-content transition-all duration-300 hover:border-primary hover:text-primary cursor-pointer w-full justify-center sm:w-fit"
                 >
                   <FiMail size={17} />
                   <span className="leading-none">Contact Me</span>

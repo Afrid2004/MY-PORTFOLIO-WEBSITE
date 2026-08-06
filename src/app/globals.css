@@ -67,6 +67,40 @@ body {
 
   pointer-events: none;
 }
+.card-hover {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.card-hover::before {
+  content: "";
+  position: absolute;
+  top: -60%;
+  left: 0;
+  width: 260px;
+  height: 240%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 20%,
+    rgba(255, 255, 255, 0.12) 40%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.12) 60%,
+    rgba(255, 255, 255, 0.03) 80%,
+    transparent 100%
+  );
+  filter: blur(35px);
+  transform: translate3d(calc(var(--x, 50%) - 130px), 0, 0) rotate(-18deg);
+  opacity: 0;
+  will-change: transform;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.card-hover:hover::before {
+  opacity: 1;
+}
 
 @custom-variant dark (&:where([data-theme=portfolio-dark], [data-theme=portfolio-dark] *));
 
