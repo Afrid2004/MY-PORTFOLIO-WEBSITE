@@ -3,12 +3,28 @@ import Logo from "@/components/Logo/Logo";
 import NavLink from "@/components/NavLink/NavLink";
 import React, { useEffect, useRef, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
+import { motion } from "motion/react";
 
 const Navbar = () => {
   const [menu, setMenu] = useState(false);
   const menuRef = useRef(null);
   const [showNavbar, setShowNavbar] = useState(true);
   const lastScrollY = useRef(0);
+
+  const navItemVariants = {
+    hidden: {
+      opacity: 0,
+      y: -12,
+    },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.4,
+        ease: "easeOut",
+      },
+    },
+  };
 
   useEffect(() => {
     const resize = () => {
@@ -48,21 +64,21 @@ const Navbar = () => {
   }, []);
   const menus = (
     <>
-      <li>
+      <motion.li variants={navItemVariants}>
         <NavLink href={"/"}>Home</NavLink>
-      </li>
-      <li>
+      </motion.li>
+      <motion.li variants={navItemVariants}>
         <NavLink href={"/about"}>About</NavLink>
-      </li>
-      <li>
+      </motion.li>
+      <motion.li variants={navItemVariants}>
         <NavLink href={"/services"}>Services</NavLink>
-      </li>
-      <li>
+      </motion.li>
+      <motion.li variants={navItemVariants}>
         <NavLink href={"/experience"}>Experience</NavLink>
-      </li>
-      <li>
+      </motion.li>
+      <motion.li variants={navItemVariants}>
         <NavLink href={"/education"}>Education</NavLink>
-      </li>
+      </motion.li>
     </>
   );
   return (
@@ -83,15 +99,37 @@ const Navbar = () => {
           <div className="relative my-5" ref={menuRef}>
             <div>
               <div className="flex items-center justify-between pr-3 px-6 py-3 bg-base-200 rounded-[9999px] border border-secondary">
-                <div className="w-40">
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.5,
+                    delay: 0.15,
+                    ease: "easeOut",
+                  }}
+                  className="w-40"
+                >
                   <Logo></Logo>
-                </div>
+                </motion.div>
                 {/* desktop navigation menus  */}
                 <nav>
                   <div className="flex items-center gap-1">
-                    <ul className=" items-center gap-1 hidden md:flex">
+                    <motion.ul
+                      initial="hidden"
+                      animate="show"
+                      variants={{
+                        hidden: {},
+                        show: {
+                          transition: {
+                            staggerChildren: 0.08,
+                            delayChildren: 0.25,
+                          },
+                        },
+                      }}
+                      className=" items-center gap-1 hidden md:flex"
+                    >
                       {menus}
-                    </ul>
+                    </motion.ul>
                     {/* menu bar */}
                     <button
                       onClick={() => setMenu(!menu)}
