@@ -1,5 +1,6 @@
 import About from "@/components/pages/Home/About";
 import Hero from "@/components/pages/Home/Hero";
+import Projects from "@/components/pages/Home/Projects";
 import Skills from "@/components/pages/Home/Skills";
 import Stats from "@/components/pages/Home/Stats";
 import Image from "next/image";
@@ -18,6 +19,9 @@ export default function Home() {
 
       {/* skills section */}
       <Skills></Skills>
+
+      {/* projects section */}
+      <Projects></Projects>
     </div>
   );
 }
