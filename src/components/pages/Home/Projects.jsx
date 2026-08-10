@@ -440,29 +440,14 @@ const Projects = () => {
 
                     <div className="my-6 h-px bg-white/10" />
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center flex-col sm:flex-row gap-3">
                       {project.liveUrl !== "#" ? (
                         <a
                           href={project.liveUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="
-                            inline-flex
-                            flex-1
-                            items-center
-                            justify-center
-                            gap-2
-                            rounded-xl
-                            bg-primary
-                            px-4
-                            py-2.5
-                            text-sm
-                            font-semibold
-                            text-primary-content
-                            transition-all
-                            duration-300
-                            hover:brightness-110
-                            hover:-translate-y-0.5
+                            inline-flex flex-1 items-center gap-3 rounded-full border-2 border-primary bg-primary px-6 py-3 font-medium text-secondary transition-all duration-300 text-sm hover:bg-transparent hover:text-primary cursor-pointer w-full justify-center sm:w-fit
                           "
                         >
                           <FaExternalLinkAlt className="text-xs" />
@@ -471,19 +456,7 @@ const Projects = () => {
                       ) : (
                         <span
                           className="
-                            inline-flex
-                            flex-1
-                            cursor-not-allowed
-                            items-center
-                            justify-center
-                            gap-2
-                            rounded-xl
-                            bg-white/5
-                            px-4
-                            py-2.5
-                            text-sm
-                            font-semibold
-                            text-base-content/30
+                            inline-flex flex-1 items-center gap-3 rounded-full border-2 border-white/15 bg-transparent px-6 py-3 font-medium text-base-content transition-all text-sm duration-300 hover:border-primary hover:text-primary cursor-pointer w-full justify-center sm:w-fit
                           "
                         >
                           Coming Soon
@@ -494,26 +467,7 @@ const Projects = () => {
                         href={project.githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="
-                          inline-flex
-                          flex-1
-                          items-center
-                          justify-center
-                          gap-2
-                          rounded-xl
-                          border
-                          border-white/10
-                          bg-white/3
-                          px-4
-                          py-2.5
-                          text-sm
-                          font-semibold
-                          transition-all
-                          duration-300
-                          hover:border-white/20
-                          hover:bg-white/6
-                          hover:-translate-y-0.5
-                        "
+                        className="inline-flex flex-1 items-center gap-3 rounded-full border-2 border-white/15 bg-transparent px-6 py-3 font-medium text-base-content transition-all text-sm duration-300 hover:border-primary hover:text-primary cursor-pointer w-full justify-center sm:w-fit"
                       >
                         <FaGithub className="text-base" />
                         GitHub

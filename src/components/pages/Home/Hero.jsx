@@ -105,7 +105,7 @@ const Hero = () => {
                   className="flex items-center flex-wrap md:flex-nowrap gap-2"
                 >
                   <MagneticButton className="w-full sm:w-fit">
-                    <button className="group inline-flex items-center gap-3 rounded-full border-2 border-primary bg-primary px-6 py-3 font-medium text-secondary transition-all duration-300 hover:bg-transparent hover:text-primary cursor-pointer w-full justify-center sm:w-fit">
+                    <button className="inline-flex items-center gap-3 rounded-full border-2 border-primary bg-primary px-6 py-3 font-medium text-secondary transition-all duration-300 hover:bg-transparent hover:text-primary cursor-pointer w-full justify-center sm:w-fit">
                       <span>View Projects</span>
 
                       <FiArrowRight
@@ -115,7 +115,7 @@ const Hero = () => {
                     </button>
                   </MagneticButton>
                   <MagneticButton className="w-full sm:w-fit">
-                    <button className="group inline-flex items-center gap-3 rounded-full border-2 border-white/15 bg-transparent px-6 py-3 font-medium text-base-content transition-all duration-300 hover:border-primary hover:text-primary cursor-pointer w-full justify-center sm:w-fit">
+                    <button className="inline-flex items-center gap-3 rounded-full border-2 border-white/15 bg-transparent px-6 py-3 font-medium text-base-content transition-all duration-300 hover:border-primary hover:text-primary cursor-pointer w-full justify-center sm:w-fit">
                       <FiDownload
                         size={18}
                         className="transition-transform duration-300 group-hover:-translate-y-0.5"
