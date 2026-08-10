@@ -3,6 +3,7 @@ import Image from "next/image";
 import { FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa6";
 import { FiAward, FiCheck, FiMail, FiMapPin, FiUser } from "react-icons/fi";
 import { HiOutlineEnvelope } from "react-icons/hi2";
+import { motion } from "motion/react";
 
 const About = () => {
   const handleMouseMove = (e) => {
@@ -10,13 +11,92 @@ const About = () => {
     const x = e.clientX - rect.left;
     e.currentTarget.style.setProperty("--x", `${x}px`);
   };
+
+  const containerVariants = {
+    hidden: {},
+    show: {
+      transition: {
+        staggerChildren: 0.12,
+      },
+    },
+  };
+
+  const fadeUpVariants = {
+    hidden: {
+      opacity: 0,
+      y: 30,
+    },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.7,
+        ease: [0.22, 1, 0.36, 1],
+      },
+    },
+  };
+
+  const leftVariants = {
+    hidden: {
+      opacity: 0,
+      x: -40,
+    },
+    show: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.22, 1, 0.36, 1],
+      },
+    },
+  };
+
+  const rightVariants = {
+    hidden: {
+      opacity: 0,
+      x: 40,
+    },
+    show: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.22, 1, 0.36, 1],
+      },
+    },
+  };
+
+  const modernVariants = {
+    hidden: {
+      opacity: 0,
+      y: 30,
+    },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        delay: 0.3,
+        ease: [0.22, 1, 0.36, 1],
+      },
+    },
+  };
   return (
     <section className="relative py-16 lg:py-28 overflow-hidden">
       <div className="container">
-        <div className="grid grid-cols-12 lg:gap-16">
-          <div className="col-span-12 lg:col-span-5 order-2 lg:order-0 mt-8 lg:mt-0">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.3 }}
+          className="grid grid-cols-12 lg:gap-16"
+        >
+          <motion.div
+            variants={leftVariants}
+            className="col-span-12 lg:col-span-5 mb-8 lg:mb-0"
+          >
             <div className="bg-white/2  rounded-2xl p-px gradient-borders">
-              <div className="rounded-sm p-6">
+              <div className="rounded-sm p-3 md:p-6">
                 {/* Image */}
                 <div className="relative overflow-hidden rounded-xl border border-white/10">
                   <Image
@@ -84,24 +164,42 @@ const About = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="col-span-12 lg:col-span-7">
-            <div className="gradient-border w-fit p-0.5">
+          <motion.div
+            variants={rightVariants}
+            className="col-span-12 lg:col-span-7"
+          >
+            <motion.div
+              variants={fadeUpVariants}
+              className="gradient-border w-fit p-0.5"
+            >
               <div className="inline-flex items-center gap-2 rounded-full bg-base-100 px-4 py-2">
                 <span className="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
                 <span className="text-sm font-medium uppercase tracking-wider">
                   About Me
                 </span>
               </div>
-            </div>
+            </motion.div>
 
-            <h2 className="mt-6 text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight">
-              Building <span className="text-primary">Modern </span> Web
-              Applications
-            </h2>
+            <motion.h2
+              variants={containerVariants}
+              className="mt-6 text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight"
+            >
+              Building{" "}
+              <motion.span
+                variants={modernVariants}
+                className="text-primary inline-block"
+              >
+                Modern{" "}
+              </motion.span>{" "}
+              Web Applications
+            </motion.h2>
 
-            <p className="mt-7 max-w-2xl text-base leading-8 text-base-content/90 mb-5">
+            <motion.p
+              variants={fadeUpVariants}
+              className="mt-7 max-w-2xl text-base leading-8 text-base-content/90 mb-5"
+            >
               I'm a Junior Full Stack Developer passionate about building
               modern, scalable, and high-performance web applications. I
               specialize in creating responsive user interfaces, developing
@@ -109,11 +207,15 @@ const About = () => {
               experiences. With a strong focus on clean code, performance, and
               usability, I enjoy turning ideas into functional products that
               solve real-world problems.
-            </p>
+            </motion.p>
 
             <div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div
+              <motion.div
+                variants={containerVariants}
+                className="grid grid-cols-1 md:grid-cols-2 gap-5"
+              >
+                <motion.div
+                  variants={fadeUpVariants}
                   onMouseMove={handleMouseMove}
                   className="card-hover bg-white/5 border border-white/10 p-5 rounded-2xl h-full relative overflow-hidden"
                 >
@@ -123,7 +225,7 @@ const About = () => {
                     </div>
                     <div>Muhammed Faisal Yousuf Afrid</div>
                   </div>
-                </div>
+                </motion.div>
                 <div
                   onMouseMove={handleMouseMove}
                   className="card-hover bg-white/5 border border-white/10 p-5 rounded-2xl h-full relative overflow-hidden"
@@ -153,12 +255,12 @@ const About = () => {
                   </div>
                   <div>Open to work</div>
                 </div>
-              </div>
+              </motion.div>
             </div>
 
             <div></div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

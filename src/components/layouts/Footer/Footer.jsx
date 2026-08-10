@@ -7,6 +7,8 @@ import Link from "next/link";
 import { FaGithub, FaLinkedin, FaFacebook, FaArrowUp } from "react-icons/fa6";
 import { FiArrowRight, FiChevronRight, FiMail } from "react-icons/fi";
 import { HiOutlineEnvelope } from "react-icons/hi2";
+import { motion } from "motion/react";
+import MagneticButton from "@/components/Buttons/MagneticButton";
 
 const Footer = () => {
   const scrollToTop = () => {
@@ -14,6 +16,57 @@ const Footer = () => {
       top: 0,
       behavior: "smooth",
     });
+  };
+
+  const containerVariants = {
+    hidden: {},
+    show: {
+      transition: {
+        staggerChildren: 0.12,
+      },
+    },
+  };
+
+  const fadeUpVariants = {
+    hidden: {
+      opacity: 0,
+      y: 30,
+    },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.7,
+        ease: [0.22, 1, 0.36, 1],
+      },
+    },
+  };
+  const fadeDelayUpVariants = {
+    hidden: {
+      opacity: 0,
+      y: 30,
+    },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.7,
+        delay: 0.2,
+        ease: [0.22, 1, 0.36, 1],
+      },
+    },
+  };
+  const fadeVariants = {
+    hidden: {
+      opacity: 0,
+    },
+    show: {
+      opacity: 1,
+      transition: {
+        duration: 1,
+        ease: [0.22, 1, 0.36, 1],
+      },
+    },
   };
 
   return (
@@ -25,28 +78,52 @@ const Footer = () => {
         <div className=" bg-base-200/70 relative overflow-hidden">
           <div className="container py-16">
             {/* CTA */}
-            <div className="text-center max-w-5xl mx-auto">
-              <h2 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold">
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.5 }}
+              className="text-center max-w-5xl mx-auto"
+            >
+              <motion.h2
+                variants={fadeVariants}
+                className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold"
+              >
                 Let's Build Something{" "}
-                <span className="text-primary">Amazing</span>
-              </h2>
+                <motion.span
+                  variants={fadeDelayUpVariants}
+                  className="text-primary inline-block"
+                >
+                  Amazing
+                </motion.span>
+              </motion.h2>
 
-              <p className="mt-5 text-base-content/70 leading-7">
+              <motion.p
+                variants={fadeUpVariants}
+                className="mt-5 text-base-content/70 leading-7"
+              >
                 I'm available for freelance projects, remote jobs and exciting
                 full-stack development opportunities.
-              </p>
+              </motion.p>
 
-              <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-                <BookMeeting />
-                <Link
-                  href="mailto:mdfaisalafrid@gmail.com"
-                  className="inline-flex items-center gap-3 rounded-full border-2 border-white/15 bg-transparent px-6 py-3 font-medium text-base-content transition-all duration-300 hover:border-primary hover:text-primary cursor-pointer w-full justify-center sm:w-fit"
-                >
-                  <FiMail size={17} />
-                  <span className="leading-none">Contact Me</span>
-                </Link>
-              </div>
-            </div>
+              <motion.div
+                variants={fadeUpVariants}
+                className="mt-8 flex flex-col sm:flex-row justify-center gap-4"
+              >
+                <MagneticButton className="w-full sm:w-fit">
+                  <BookMeeting />
+                </MagneticButton>
+                <MagneticButton className="w-full sm:w-fit">
+                  <Link
+                    href="mailto:mdfaisalafrid@gmail.com"
+                    className="inline-flex items-center gap-3 rounded-full border-2 border-white/15 bg-transparent px-6 py-4 font-medium text-base-content transition-all h-full duration-300 hover:border-primary hover:text-primary cursor-pointer w-full justify-center sm:w-fit"
+                  >
+                    <FiMail size={17} />
+                    <span className="leading-none">Contact Me</span>
+                  </Link>
+                </MagneticButton>
+              </motion.div>
+            </motion.div>
 
             {/* Divider */}
             <div className="my-16 h-px bg-linear-to-r from-transparent via-gray-600 to-transparent" />

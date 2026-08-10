@@ -1,6 +1,31 @@
+"use client";
 import React from "react";
+import { motion } from "motion/react";
 
 const Stats = () => {
+  const fadeUpVariants = {
+    hidden: {
+      opacity: 0,
+      y: 25,
+    },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.7,
+        ease: [0.22, 1, 0.36, 1],
+      },
+    },
+  };
+
+  const containerVariants = {
+    hidden: {},
+    show: {
+      transition: {
+        staggerChildren: 0.12,
+      },
+    },
+  };
   const allStats = [
     {
       title: "20",
@@ -27,10 +52,17 @@ const Stats = () => {
     <div>
       <div className="bg-white/2 border-t border-b border-white/10">
         <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.3 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
+          >
             {allStats.map((stats, idx) => {
               return (
-                <div
+                <motion.div
+                  variants={fadeUpVariants}
                   key={idx}
                   className="border-b last:border-b-0 md:nth-[3]:border-b-0 lg:border-b-0 md:border-r md:nth-[2]:border-r-0 lg:nth-[2]:border-r p-5 lg:p-8 lg:first:pl-0 last:pr-0 flex lg:first:justify-start justify-center lg:last:justify-end last:border-r-0 border-white/10"
                 >
@@ -43,10 +75,10 @@ const Stats = () => {
                       {stats.desc}
                     </p>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

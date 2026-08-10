@@ -3,6 +3,7 @@ import Image from "next/image";
 import React from "react";
 import { FiArrowRight, FiDownload } from "react-icons/fi";
 import { motion } from "motion/react";
+import MagneticButton from "@/components/Buttons/MagneticButton";
 
 const Hero = () => {
   const containerVariants = {
@@ -103,22 +104,26 @@ const Hero = () => {
                   variants={opacityVarients}
                   className="flex items-center flex-wrap md:flex-nowrap gap-2"
                 >
-                  <button className="group inline-flex items-center gap-3 rounded-full border-2 border-primary bg-primary px-6 py-3 font-medium text-secondary transition-all duration-300 hover:bg-transparent hover:text-primary cursor-pointer w-full justify-center sm:w-fit">
-                    <span>View Projects</span>
+                  <MagneticButton className="w-full sm:w-fit">
+                    <button className="group inline-flex items-center gap-3 rounded-full border-2 border-primary bg-primary px-6 py-3 font-medium text-secondary transition-all duration-300 hover:bg-transparent hover:text-primary cursor-pointer w-full justify-center sm:w-fit">
+                      <span>View Projects</span>
 
-                    <FiArrowRight
-                      size={18}
-                      className="transition-transform duration-300 group-hover:translate-x-1"
-                    />
-                  </button>
-                  <button className="group inline-flex items-center gap-3 rounded-full border-2 border-white/15 bg-transparent px-6 py-3 font-medium text-base-content transition-all duration-300 hover:border-primary hover:text-primary cursor-pointer w-full justify-center sm:w-fit">
-                    <FiDownload
-                      size={18}
-                      className="transition-transform duration-300 group-hover:-translate-y-0.5"
-                    />
+                      <FiArrowRight
+                        size={18}
+                        className="transition-transform duration-300 group-hover:translate-x-1"
+                      />
+                    </button>
+                  </MagneticButton>
+                  <MagneticButton className="w-full sm:w-fit">
+                    <button className="group inline-flex items-center gap-3 rounded-full border-2 border-white/15 bg-transparent px-6 py-3 font-medium text-base-content transition-all duration-300 hover:border-primary hover:text-primary cursor-pointer w-full justify-center sm:w-fit">
+                      <FiDownload
+                        size={18}
+                        className="transition-transform duration-300 group-hover:-translate-y-0.5"
+                      />
 
-                    <span>View Resume</span>
-                  </button>
+                      <span>View Resume</span>
+                    </button>
+                  </MagneticButton>
                 </motion.div>
               </motion.div>
             </div>
