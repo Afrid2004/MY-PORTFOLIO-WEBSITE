@@ -20,6 +20,7 @@ import {
 } from "react-icons/si";
 import { BiCheckShield } from "react-icons/bi";
 import { motion, AnimatePresence } from "motion/react";
+import Image from "next/image";
 
 const Projects = () => {
   const [filter, setFilter] = useState("All");
@@ -337,9 +338,11 @@ const Projects = () => {
                   "
                 >
                   <div className="relative aspect-video overflow-hidden">
-                    <motion.img
+                    <Image
                       src={project.image}
                       alt={project.title}
+                      width={1900}
+                      height={1080}
                       className="
                         h-full
                         w-full
