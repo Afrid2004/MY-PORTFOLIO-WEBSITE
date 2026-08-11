@@ -8,10 +8,10 @@ const Logo = () => {
       <Link href={"/"}>
         <Image
           className="w-full object-cover"
-          width={1000}
-          height={1000}
+          width={160}
+          height={33}
           alt="Faisal"
-          src={"/assets/images/logo.png"}
+          src={"/assets/images/faisallogo.png"}
         />
       </Link>
     </div>

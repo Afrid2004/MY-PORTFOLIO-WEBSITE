@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   FaGithub,
   FaExternalLinkAlt,
@@ -19,8 +19,9 @@ import {
   SiJsonwebtokens,
 } from "react-icons/si";
 import { BiCheckShield } from "react-icons/bi";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
 import Image from "next/image";
+import Reveal from "@/components/Reavel/Reavel";
 
 const Projects = () => {
   const [filter, setFilter] = useState("All");
@@ -311,29 +312,21 @@ const Projects = () => {
         </motion.div>
 
         <div className="mt-10">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={filter}
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="show"
-              exit={{
-                opacity: 0,
-                y: 10,
-              }}
-              viewport={{ once: true, amount: 0.3 }}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-6"
-            >
-              {filteredProjects.map((project) => (
-                <motion.article
-                  key={project.id}
-                  variants={itemVariants}
+          <div key={filter} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {filteredProjects.map((project) => (
+              <Reveal
+                key={project.id}
+                initial="opacity-0 scale-[0.95]"
+                view="opacity-100 scale-100"
+                transition="transition-all duration-300"
+                viewport={0.3}
+              >
+                <article
                   className="
                     group relative overflow-hidden
                     rounded-3xl
                     border border-white/10
                     bg-white/3
-                    transition-all duration-500
                     hover:border-primary/30
                   "
                 >
@@ -474,10 +467,10 @@ const Projects = () => {
                       </a>
                     </div>
                   </div>
-                </motion.article>
-              ))}
-            </motion.div>
-          </AnimatePresence>
+                </article>
+              </Reveal>
+            ))}
+          </div>
         </div>
 
         <motion.div

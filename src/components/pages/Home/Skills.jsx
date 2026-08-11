@@ -27,6 +27,7 @@ import { VscVscodeInsiders } from "react-icons/vsc";
 import { FaFigma, FaNpm } from "react-icons/fa6";
 import { SiPostman, SiVercel } from "react-icons/si";
 import { motion, AnimatePresence } from "motion/react";
+import Reveal from "@/components/Reavel/Reavel";
 
 const Skills = () => {
   const [cat, setCat] = useState(0);
@@ -55,20 +56,6 @@ const Skills = () => {
     },
   };
 
-  const skillVariants = {
-    hidden: {
-      opacity: 0,
-      y: 15,
-    },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.1,
-        ease: [0.22, 1, 0.36, 1],
-      },
-    },
-  };
   const categories = [
     {
       title: "Frontend",
@@ -309,40 +296,38 @@ const Skills = () => {
 
           {/* Category Content */}
           <div className="mt-6">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={categories[cat].title}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.25 }}
-              >
-                {/* Category Header */}
-                <div className="mb-7">
-                  <h3 className="text-2xl font-semibold">
-                    {categories[cat].title}
-                  </h3>
+            <div
+              key={categories[cat].title}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+            >
+              {/* Category Header */}
+              <div className="mb-7">
+                <h3 className="text-2xl font-semibold">
+                  {categories[cat].title}
+                </h3>
 
-                  <p className="mt-2 text-sm text-base-content/50">
-                    {categories[cat].description}
-                  </p>
-                </div>
+                <p className="mt-2 text-sm text-base-content/50">
+                  {categories[cat].description}
+                </p>
+              </div>
 
-                {/* Skills */}
-                <motion.div
-                  variants={containerVariants}
-                  initial="hidden"
-                  whileInView="show"
-                  viewport={{ once: true, amount: 0.2 }}
-                  className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5"
-                >
-                  {categories[cat].skills.map((skill) => {
-                    const Icon = skill.icon;
+              {/* Skills */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                {categories[cat].skills.map((skill) => {
+                  const Icon = skill.icon;
 
-                    return (
-                      <motion.div
-                        key={skill.name}
-                        variants={skillVariants}
+                  return (
+                    <Reveal
+                      key={skill.name}
+                      initial="opacity-0 translate-y-10"
+                      view="opacity-100 translate-y-0"
+                      transition="transition-all duration-300"
+                      viewport={0.3}
+                    >
+                      <div
                         style={{
                           "--skill-color": skill.color,
                         }}
@@ -396,12 +381,12 @@ const Skills = () => {
                             />
                           </div>
                         </div>
-                      </motion.div>
-                    );
-                  })}
-                </motion.div>
-              </motion.div>
-            </AnimatePresence>
+                      </div>
+                    </Reveal>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>
