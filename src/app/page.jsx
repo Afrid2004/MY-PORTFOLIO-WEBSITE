@@ -4,6 +4,7 @@ import Projects from "@/components/pages/Home/Projects";
 import Services from "@/components/pages/Home/Services";
 import Skills from "@/components/pages/Home/Skills";
 import Stats from "@/components/pages/Home/Stats";
+import WorkExperience from "@/components/pages/Home/WorkExperience";
 import Image from "next/image";
 
 export default function Home() {
@@ -23,6 +24,9 @@ export default function Home() {
 
       {/* services section */}
       <Services></Services>
+
+      {/* workexperience section */}
+      <WorkExperience></WorkExperience>
 
       {/* projects section */}
       <Projects></Projects>
