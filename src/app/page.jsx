@@ -1,4 +1,5 @@
 import About from "@/components/pages/Home/About";
+import EducationalBackground from "@/components/pages/Home/EducationlBackground";
 import Hero from "@/components/pages/Home/Hero";
 import Projects from "@/components/pages/Home/Projects";
 import Services from "@/components/pages/Home/Services";
@@ -27,6 +28,9 @@ export default function Home() {
 
       {/* workexperience section */}
       <WorkExperience></WorkExperience>
+
+      {/* EducationalBackground section */}
+      <EducationalBackground></EducationalBackground>
 
       {/* projects section */}
       <Projects></Projects>

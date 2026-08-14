@@ -55,7 +55,7 @@ const WorkExperience = () => {
 
   const filteredWork = workExperiences[filter];
   return (
-    <section className="py-20">
+    <section className="py-20 relative">
       <div className="container relative z-10">
         <Reveal
           initial="opacity-0 translate-y-6"
@@ -85,8 +85,8 @@ const WorkExperience = () => {
         </Reveal>
 
         <div className="grid grid-cols-12 gap-5">
-          <div className="col-span-3">
-            <div className="flex flex-col gap-5">
+          <div className="col-span-12 lg:col-span-3">
+            <div className="flex flex-wrap lg:flex-nowrap lg:flex-col gap-5">
               {workExperiences.map((data, idx) => {
                 return (
                   <Reveal
@@ -95,10 +95,11 @@ const WorkExperience = () => {
                     view="opacity-100 translate-y-0"
                     transition="transition-all duration-150"
                     viewport={0.1}
+                    className="w-full sm:w-[calc(50%-0.625rem)] lg:w-full"
                   >
                     <div
                       onClick={() => setFilter(idx)}
-                      className={`flex flex-col gap-3 rounded-2xl px-4 py-3 cursor-pointer border border-l-3 transition-all duration-75 ${
+                      className={`h-full flex flex-col gap-3 rounded-2xl px-4 py-3 cursor-pointer border border-l-3 transition-all duration-75 ${
                         filter === idx
                           ? "active border-l-primary bg-primary/5 border-primary/10 hover:bg-primary/7"
                           : "border-l-white/20 border-white/5 bg-white/5 hover:bg-white/7"
@@ -120,7 +121,7 @@ const WorkExperience = () => {
               })}
             </div>
           </div>
-          <div className="col-span-9">
+          <div className="col-span-12 lg:col-span-9">
             <Reveal
               key={filter}
               initial="opacity-0 translate-y-10"
@@ -226,6 +227,19 @@ const WorkExperience = () => {
             </Reveal>
           </div>
         </div>
+      </div>
+
+      <div className="absolute top-20 -left-10 md:-left-60 lg:-left-80 pointer-events-none select-none -z-1">
+        <div
+          className="
+      w-75 h-75
+      md:w-137.5 md:h-137.5
+      lg:w-175 lg:h-175
+      rounded-full
+      blur-[100px] md:blur-[140px]
+      bg-[radial-gradient(circle,#209181_0%,transparent_70%)]
+    "
+        />
       </div>
     </section>
   );
