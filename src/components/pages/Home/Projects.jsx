@@ -1,25 +1,22 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   FaGithub,
   FaExternalLinkAlt,
   FaReact,
   FaNodeJs,
   FaPhp,
-  FaLaravel,
 } from "react-icons/fa";
 import {
   SiMongodb,
   SiFirebase,
   SiTailwindcss,
   SiMysql,
-  SiExpress,
   SiNextdotjs,
   SiJsonwebtokens,
 } from "react-icons/si";
 import { BiCheckShield } from "react-icons/bi";
-import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
 import Image from "next/image";
 import Reveal from "@/components/Reavel/Reavel";
 
@@ -105,43 +102,6 @@ const Projects = () => {
       liveUrl: "https://next-js-hero-kidz.vercel.app/",
       githubUrl: "https://github.com/Afrid2004/NEXT-JS-HERO-KIDZ",
     },
-
-    /*
-  {
-    id: 3,
-    title: "Smart Deals",
-    category: "Full Stack",
-    description:
-      "An auction and bidding platform where users can explore products, place bids and manage their auction activities.",
-    image: "/assets/images/smartdeals.png",
-    featured: true,
-    technologies: [
-      {
-        name: "React",
-        icon: FaReact,
-        color: "#61DAFB",
-      },
-      {
-        name: "Node.js",
-        icon: FaNodeJs,
-        color: "#68A063",
-      },
-      {
-        name: "MongoDB",
-        icon: SiMongodb,
-        color: "#47A248",
-      },
-      {
-        name: "Firebase",
-        icon: SiFirebase,
-        color: "#FFCA28",
-      },
-    ],
-    liveUrl: "https://my-smart-deals.vercel.app/",
-    githubUrl: "https://github.com/Afrid2004",
-  },
-  */
-
     {
       id: 4,
       title: "Car Verse",
@@ -165,7 +125,6 @@ const Projects = () => {
       liveUrl: "https://react-car-verse.vercel.app/",
       githubUrl: "https://github.com/Afrid2004/Car-Verse",
     },
-
     {
       id: 5,
       title: "Fast Drop",
@@ -201,164 +160,117 @@ const Projects = () => {
       ? projects
       : projects.filter((project) => project.category === filter);
 
-  const containerVariants = {
-    hidden: {},
-    show: {
-      transition: {
-        staggerChildren: 0.12,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: {
-      opacity: 0,
-      y: 30,
-    },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: [0.22, 1, 0.36, 1],
-      },
-    },
-  };
+  const delays = [
+    "delay-0",
+    "delay-[100ms]",
+    "delay-[200ms]",
+    "delay-[300ms]",
+    "delay-[400ms]",
+  ];
 
   return (
-    <section className="relative py-20 overflow-hidden">
+    <section className="relative py-20 overflow-x-hidden">
       <div className="container relative z-10">
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={containerVariants}
+        {/* Section Header */}
+        <Reveal
+          initial="opacity-0 translate-y-7"
+          view="opacity-100 translate-y-0"
+          transition="transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          viewport={0.2}
           className="max-w-3xl mx-auto text-center"
         >
-          <motion.div
-            variants={itemVariants}
+          <Reveal
+            initial="opacity-0 translate-y-7"
+            view="opacity-100 translate-y-0"
+            transition="transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            viewport={0.2}
             className="gradient-border w-fit p-0.5 mx-auto"
           >
             <div className="inline-flex items-center gap-2 rounded-full bg-base-100 px-4 py-2">
               <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-
               <span className="text-sm font-medium uppercase tracking-wider">
                 My Projects
               </span>
             </div>
-          </motion.div>
+          </Reveal>
 
-          <motion.h2
-            variants={itemVariants}
-            className="mt-6 text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight"
+          <Reveal
+            initial="opacity-0 translate-y-7"
+            view="opacity-100 translate-y-0"
+            transition="transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] delay-[100ms]"
+            viewport={0.2}
           >
-            Things I've <span className="text-primary">Built</span>
-          </motion.h2>
+            <h2 className="mt-6 text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight">
+              Things I've <span className="text-primary">Built</span>
+            </h2>
+          </Reveal>
 
-          {/* Description */}
-          <motion.p
-            variants={itemVariants}
-            className="mt-5 text-base leading-8 text-base-content/60"
+          <Reveal
+            initial="opacity-0 translate-y-7"
+            view="opacity-100 translate-y-0"
+            transition="transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] delay-[200ms]"
+            viewport={0.2}
           >
-            A collection of projects I've built while learning, experimenting,
-            and solving real world problems.
-          </motion.p>
-        </motion.div>
+            <p className="mt-5 text-base leading-8 text-base-content/60">
+              A collection of projects I've built while learning, experimenting,
+              and solving real world problems.
+            </p>
+          </Reveal>
+        </Reveal>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{
-            duration: 0.6,
-            delay: 0.2,
-            ease: [0.22, 1, 0.36, 1],
-          }}
+        {/* Filter */}
+        <Reveal
+          initial="opacity-0 translate-y-5"
+          view="opacity-100 translate-y-0"
+          transition="transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] delay-[200ms]"
+          viewport={0.2}
           className="mt-12"
         >
           <div className="flex items-center justify-center gap-3 flex-wrap">
             {categories.map((category) => (
-              <motion.button
+              <button
                 key={category}
                 onClick={() => setFilter(category)}
-                whileTap={{ scale: 0.96 }}
-                className={`relative inline-flex items-center justify-center rounded-full px-6 py-2 text-sm font-medium cursor-pointer ${
+                className={`relative inline-flex items-center justify-center rounded-full px-6 py-2 text-sm font-medium cursor-pointer transition-transform duration-200 active:scale-[0.96] ${
                   filter === category
                     ? "text-primary"
                     : "text-base-content hover:text-primary"
                 }`}
               >
-                {filter === category && (
-                  <motion.span
-                    layoutId="projectFilter"
-                    className="absolute inset-0 rounded-full border-2 border-primary bg-primary/5"
-                    transition={{
-                      type: "spring",
-                      stiffness: 350,
-                      damping: 30,
-                      mass: 0.8,
-                    }}
-                  />
-                )}
-
-                {filter !== category && (
+                {filter === category ? (
+                  <span className="absolute inset-0 rounded-full border-2 border-primary bg-primary/5 transition-all duration-300" />
+                ) : (
                   <span className="absolute inset-0 rounded-full border-2 border-white/15 transition-colors duration-300 hover:border-primary/40" />
                 )}
 
                 <span className="relative z-10">{category}</span>
-              </motion.button>
+              </button>
             ))}
           </div>
-        </motion.div>
+        </Reveal>
 
+        {/* Projects */}
         <div className="mt-10">
           <div key={filter} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {filteredProjects.map((project) => (
+            {filteredProjects.map((project, idx) => (
               <Reveal
                 key={project.id}
-                initial="opacity-0 scale-[0.95]"
-                view="opacity-100 scale-100"
-                transition="transition-all duration-300"
+                initial="opacity-0 translate-y-10"
+                view="opacity-100 translate-y-0"
+                transition={`transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${delays[idx] || "delay-0"}`}
                 viewport={0.3}
               >
-                <article
-                  className="
-                    group relative overflow-hidden
-                    rounded-3xl
-                    border border-white/10
-                    bg-white/3
-                    hover:border-primary/30
-                  "
-                >
+                <article className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/3 hover:border-primary/30">
                   <div className="relative aspect-video overflow-hidden">
                     <Image
                       src={project.image}
                       alt={project.title}
                       width={1900}
                       height={1080}
-                      className="
-                        h-full
-                        w-full
-                        object-cover
-                        transition-transform
-                        duration-700
-                        group-hover:scale-105
-                      "
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
 
-                    <div
-                      className="
-                        absolute inset-0
-                        bg-gradient-to-t
-                        from-black/80
-                        via-black/20
-                        to-transparent
-                        opacity-70
-                        transition-opacity
-                        duration-500
-                        group-hover:opacity-90
-                      "
-                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-70 transition-opacity duration-500 group-hover:opacity-90" />
 
                     {project.featured && (
                       <div className="absolute top-4 left-4">
@@ -375,24 +287,12 @@ const Projects = () => {
                       </span>
                     </div>
 
-                    <div
-                      className="
-                        absolute bottom-4 right-4
-                      "
-                    >
+                    <div className="absolute bottom-4 right-4">
                       <a
                         href={project.liveUrl}
-                        className="flex h-11 w-11
-                        items-center justify-center
-                        rounded-full
-                        border border-white/15
-                        bg-black/40
-                        text-white
-                        backdrop-blur-md
-                        transition-all duration-300
-                        group-hover:border-primary/40
-                        group-hover:bg-primary
-                        group-hover:text-primary-content"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-black/40 text-white backdrop-blur-md transition-all duration-300 group-hover:border-primary/40 group-hover:bg-primary group-hover:text-primary-content"
                       >
                         <FaExternalLinkAlt className="text-sm" />
                       </a>
@@ -425,6 +325,7 @@ const Projects = () => {
                                 className="text-sm"
                               />
                             )}
+
                             {tech.name}
                           </span>
                         );
@@ -439,19 +340,13 @@ const Projects = () => {
                           href={project.liveUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="
-                            inline-flex flex-1 items-center gap-3 rounded-full border-2 border-primary bg-primary px-6 py-3 font-medium text-secondary transition-all duration-300 text-sm hover:bg-transparent hover:text-primary cursor-pointer w-full justify-center sm:w-fit
-                          "
+                          className="inline-flex flex-1 items-center gap-3 rounded-full border-2 border-primary bg-primary px-6 py-3 font-medium text-secondary transition-all duration-300 text-sm hover:bg-transparent hover:text-primary cursor-pointer w-full justify-center sm:w-fit"
                         >
                           <FaExternalLinkAlt className="text-xs" />
                           Live Demo
                         </a>
                       ) : (
-                        <span
-                          className="
-                            inline-flex flex-1 items-center gap-3 rounded-full border-2 border-white/15 bg-transparent px-6 py-3 font-medium text-base-content transition-all text-sm duration-300 hover:border-primary hover:text-primary cursor-pointer w-full justify-center sm:w-fit
-                          "
-                        >
+                        <span className="inline-flex flex-1 items-center gap-3 rounded-full border-2 border-white/15 bg-transparent px-6 py-3 font-medium text-base-content transition-all text-sm duration-300 hover:border-primary hover:text-primary cursor-pointer w-full justify-center sm:w-fit">
                           Coming Soon
                         </span>
                       )}
@@ -473,70 +368,34 @@ const Projects = () => {
           </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{
-            duration: 0.6,
-            delay: 0.2,
-          }}
+        {/* View More */}
+        <Reveal
+          initial="opacity-0 translate-y-5"
+          view="opacity-100 translate-y-0"
+          transition="transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] delay-[200ms]"
+          viewport={0.3}
           className="mt-10 flex justify-center"
         >
           <a
             href="https://github.com/Afrid2004"
             target="_blank"
             rel="noopener noreferrer"
-            className="
-              inline-flex
-              items-center
-              gap-2
-              rounded-full
-              border
-              border-white/10
-              bg-white/3
-              px-6
-              py-3
-              text-sm
-              font-medium
-              transition-all
-              duration-300
-              hover:border-primary/40
-              hover:bg-primary/5
-              hover:text-primary
-            "
+            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/3 px-6 py-3 text-sm font-medium transition-all duration-300 hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
           >
             <FaGithub />
             View More Projects
             <FaExternalLinkAlt className="text-xs" />
           </a>
-        </motion.div>
+        </Reveal>
       </div>
 
+      {/* Background Glow */}
       <div className="pointer-events-none absolute -right-40 top-40 -z-10">
-        <div
-          className="
-            h-[500px]
-            w-[500px]
-            rounded-full
-            bg-[radial-gradient(circle,#209181_0%,transparent_70%)]
-            blur-[140px]
-            opacity-40
-          "
-        />
+        <div className="h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle,#209181_0%,transparent_70%)] blur-[140px] opacity-40" />
       </div>
 
       <div className="pointer-events-none absolute -left-40 bottom-0 -z-10">
-        <div
-          className="
-            h-[450px]
-            w-[450px]
-            rounded-full
-            bg-[radial-gradient(circle,#209181_0%,transparent_70%)]
-            blur-[140px]
-            opacity-25
-          "
-        />
+        <div className="h-[450px] w-[450px] rounded-full bg-[radial-gradient(circle,#209181_0%,transparent_70%)] blur-[140px] opacity-25" />
       </div>
     </section>
   );

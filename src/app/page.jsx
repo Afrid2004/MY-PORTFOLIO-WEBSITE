@@ -5,6 +5,7 @@ import Projects from "@/components/pages/Home/Projects";
 import Services from "@/components/pages/Home/Services";
 import Skills from "@/components/pages/Home/Skills";
 import Stats from "@/components/pages/Home/Stats";
+import Testimonials from "@/components/pages/Home/Testimonial";
 import WorkExperience from "@/components/pages/Home/WorkExperience";
 import Image from "next/image";
 
@@ -34,6 +35,9 @@ export default function Home() {
 
       {/* projects section */}
       <Projects></Projects>
+
+      {/* testimonial section */}
+      <Testimonials></Testimonials>
     </div>
   );
 }

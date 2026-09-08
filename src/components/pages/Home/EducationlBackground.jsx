@@ -144,7 +144,7 @@ const EducationalBackground = () => {
         </Reveal>
 
         <div className="grid grid-cols-12 gap-5">
-          <div className="col-span-12 lg:col-span-3">
+          <div className="col-span-12 lg:col-span-4 2xl:col-span-3">
             <div className="flex flex-wrap lg:flex-nowrap lg:flex-col gap-5">
               {educations.map((data, idx) => {
                 return (
@@ -180,7 +180,7 @@ const EducationalBackground = () => {
               })}
             </div>
           </div>
-          <div className="col-span-12 lg:col-span-9">
+          <div className="col-span-12 lg:col-span-8 2xl:col-span-9">
             <Reveal
               key={filter}
               initial="opacity-0 translate-y-10"
@@ -202,7 +202,7 @@ const EducationalBackground = () => {
                       </p>
                     </div>
 
-                    <div className="flex flex-col items-start gap-2 sm:items-end">
+                    <div className="flex flex-col items-start gap-2 sm:items-end shrink-0">
                       <span className="text-sm text-base-content/80">
                         {filteredEducation.duration}
                       </span>
@@ -227,8 +227,11 @@ const EducationalBackground = () => {
                     <div className="mt-4 space-y-4">
                       {filteredEducation.academicHighlights.map(
                         (item, index) => (
-                          <div key={index} className="flex items-start gap-3">
-                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                          <div
+                            key={index}
+                            className="flex items-center gap-3 mb-5 last:mb-0"
+                          >
+                            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
 
                             <p className="text-sm leading-7 text-base-content/60">
                               {item}

@@ -1,9 +1,11 @@
 "use client";
+
+import Reveal from "@/components/Reavel/Reavel";
 import Image from "next/image";
 import { FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa6";
-import { FiAward, FiCheck, FiMail, FiMapPin, FiUser } from "react-icons/fi";
+import { FiCheck, FiMail, FiMapPin, FiUser } from "react-icons/fi";
 import { HiOutlineEnvelope } from "react-icons/hi2";
-import { motion } from "motion/react";
+
 
 const About = () => {
   const handleMouseMove = (e) => {
@@ -12,90 +14,18 @@ const About = () => {
     e.currentTarget.style.setProperty("--x", `${x}px`);
   };
 
-  const containerVariants = {
-    hidden: {},
-    show: {
-      transition: {
-        staggerChildren: 0.12,
-      },
-    },
-  };
-
-  const fadeUpVariants = {
-    hidden: {
-      opacity: 0,
-      y: 30,
-    },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.7,
-        ease: [0.22, 1, 0.36, 1],
-      },
-    },
-  };
-
-  const leftVariants = {
-    hidden: {
-      opacity: 0,
-      x: -40,
-    },
-    show: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.22, 1, 0.36, 1],
-      },
-    },
-  };
-
-  const rightVariants = {
-    hidden: {
-      opacity: 0,
-      x: 40,
-    },
-    show: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.22, 1, 0.36, 1],
-      },
-    },
-  };
-
-  const modernVariants = {
-    hidden: {
-      opacity: 0,
-      y: 30,
-    },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        delay: 0.3,
-        ease: [0.22, 1, 0.36, 1],
-      },
-    },
-  };
   return (
     <section className="relative py-16 lg:py-28 overflow-hidden">
       <div className="container">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.3 }}
-          className="grid grid-cols-12 lg:gap-16"
-        >
-          <motion.div
-            variants={leftVariants}
+        <div className="grid grid-cols-12 lg:gap-16">
+          <Reveal
+            initial="opacity-0 -translate-x-10"
+            view="opacity-100 translate-x-0"
+            transition="transition-all duration-800 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            viewport={0.3}
             className="col-span-12 lg:col-span-5 mb-8 lg:mb-0"
           >
-            <div className="bg-white/2  rounded-2xl p-px gradient-borders">
+            <div className="bg-white/2 rounded-2xl p-px gradient-borders">
               <div className="rounded-sm p-3 md:p-6">
                 {/* Image */}
                 <div className="relative overflow-hidden rounded-xl border border-white/10">
@@ -123,7 +53,6 @@ const About = () => {
                   <h3 className="text-2xl font-semibold">
                     MD Faisal Yousuf Afrid
                   </h3>
-
                   <p className="mt-2 text-base-content/60">
                     Junior Full Stack Developer
                   </p>
@@ -164,14 +93,20 @@ const About = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </Reveal>
 
-          <motion.div
-            variants={rightVariants}
+          <Reveal
+            initial="opacity-0 translate-x-10"
+            view="opacity-100 translate-x-0"
+            transition="transition-all duration-800 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            viewport={0.3}
             className="col-span-12 lg:col-span-7"
           >
-            <motion.div
-              variants={fadeUpVariants}
+            <Reveal
+              initial="opacity-0 translate-y-7"
+              view="opacity-100 translate-y-0"
+              transition="transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+              viewport={0.3}
               className="gradient-border w-fit p-0.5"
             >
               <div className="inline-flex items-center gap-2 rounded-full bg-base-100 px-4 py-2">
@@ -180,87 +115,115 @@ const About = () => {
                   About Me
                 </span>
               </div>
-            </motion.div>
+            </Reveal>
 
-            <motion.h2
-              variants={containerVariants}
-              className="mt-6 text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight"
+            <Reveal
+              initial="opacity-0 translate-y-7"
+              view="opacity-100 translate-y-0"
+              transition="transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] delay-[100ms]"
+              viewport={0.3}
             >
-              Building{" "}
-              <motion.span
-                variants={modernVariants}
-                className="text-primary inline-block"
-              >
-                Modern{" "}
-              </motion.span>{" "}
-              Web Applications
-            </motion.h2>
+              <h2 className="mt-6 text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight">
+                Building{" "}
+                <span className="text-primary inline-block">Modern</span> Web
+                Applications
+              </h2>
+            </Reveal>
 
-            <motion.p
-              variants={fadeUpVariants}
-              className="mt-7 max-w-2xl text-base leading-8 text-base-content/90 mb-5"
+            <Reveal
+              initial="opacity-0 translate-y-7"
+              view="opacity-100 translate-y-0"
+              transition="transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] delay-[200ms]"
+              viewport={0.3}
             >
-              I'm a Junior Full Stack Developer passionate about building
-              modern, scalable, and high-performance web applications. I
-              specialize in creating responsive user interfaces, developing
-              reliable backend systems, and delivering seamless digital
-              experiences. With a strong focus on clean code, performance, and
-              usability, I enjoy turning ideas into functional products that
-              solve real-world problems.
-            </motion.p>
+              <p className="mt-7 max-w-2xl text-base leading-8 text-base-content/90 mb-5">
+                I'm a Junior Full Stack Developer passionate about building
+                modern, scalable, and high-performance web applications. I
+                specialize in creating responsive user interfaces, developing
+                reliable backend systems, and delivering seamless digital
+                experiences. With a strong focus on clean code, performance, and
+                usability, I enjoy turning ideas into functional products that
+                solve real-world problems.
+              </p>
+            </Reveal>
 
             <div>
-              <motion.div
-                variants={containerVariants}
-                className="grid grid-cols-1 md:grid-cols-2 gap-5"
-              >
-                <motion.div
-                  variants={fadeUpVariants}
-                  onMouseMove={handleMouseMove}
-                  className="card-hover bg-white/5 border border-white/10 p-5 rounded-2xl h-full relative overflow-hidden"
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <Reveal
+                  initial="opacity-0 translate-y-7"
+                  view="opacity-100 translate-y-0"
+                  transition="transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] delay-[300ms]"
+                  viewport={0.3}
                 >
-                  <div>
-                    <div className="flex items-center gap-2 text-primary mb-2">
-                      <FiUser className="shrink-0" /> Name
+                  <div
+                    onMouseMove={handleMouseMove}
+                    className="card-hover bg-white/5 border border-white/10 p-5 rounded-2xl h-full relative overflow-hidden"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2 text-primary mb-2">
+                        <FiUser className="shrink-0" /> Name
+                      </div>
+                      <div>Muhammed Faisal Yousuf Afrid</div>
                     </div>
-                    <div>Muhammed Faisal Yousuf Afrid</div>
                   </div>
-                </motion.div>
-                <div
-                  onMouseMove={handleMouseMove}
-                  className="card-hover bg-white/5 border border-white/10 p-5 rounded-2xl h-full relative overflow-hidden"
-                >
-                  <div>
-                    <div className="flex items-center gap-2 text-primary mb-2">
-                      <FiMail className="shrink-0" /> Email
-                    </div>
-                    <div>mdfaisalafrid@gmail.com</div>
-                  </div>
-                </div>
-                <div
-                  onMouseMove={handleMouseMove}
-                  className="card-hover bg-white/5 border border-white/10 p-5 rounded-2xl h-full"
-                >
-                  <div className="flex items-center gap-2 text-primary mb-2">
-                    <FiMapPin className="shrink-0" /> Location
-                  </div>
-                  <div>Merul Badda, Gulshan, Dhaka-1212</div>
-                </div>
-                <div
-                  onMouseMove={handleMouseMove}
-                  className="card-hover bg-white/5 border border-white/10 p-5 rounded-2xl h-full"
-                >
-                  <div className="flex items-center gap-2 text-primary mb-2">
-                    <FiCheck className="shrink-0" /> Availability
-                  </div>
-                  <div>Open to work</div>
-                </div>
-              </motion.div>
-            </div>
+                </Reveal>
 
-            <div></div>
-          </motion.div>
-        </motion.div>
+                <Reveal
+                  initial="opacity-0 translate-y-7"
+                  view="opacity-100 translate-y-0"
+                  transition="transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] delay-[380ms]"
+                  viewport={0.3}
+                >
+                  <div
+                    onMouseMove={handleMouseMove}
+                    className="card-hover bg-white/5 border border-white/10 p-5 rounded-2xl h-full relative overflow-hidden"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2 text-primary mb-2">
+                        <FiMail className="shrink-0" /> Email
+                      </div>
+                      <div>mdfaisalafrid@gmail.com</div>
+                    </div>
+                  </div>
+                </Reveal>
+
+                <Reveal
+                  initial="opacity-0 translate-y-7"
+                  view="opacity-100 translate-y-0"
+                  transition="transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] delay-[460ms]"
+                  viewport={0.3}
+                >
+                  <div
+                    onMouseMove={handleMouseMove}
+                    className="card-hover bg-white/5 border border-white/10 p-5 rounded-2xl h-full"
+                  >
+                    <div className="flex items-center gap-2 text-primary mb-2">
+                      <FiMapPin className="shrink-0" /> Location
+                    </div>
+                    <div>Merul Badda, Gulshan, Dhaka-1212</div>
+                  </div>
+                </Reveal>
+
+                <Reveal
+                  initial="opacity-0 translate-y-7"
+                  view="opacity-100 translate-y-0"
+                  transition="transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] delay-[540ms]"
+                  viewport={0.3}
+                >
+                  <div
+                    onMouseMove={handleMouseMove}
+                    className="card-hover bg-white/5 border border-white/10 p-5 rounded-2xl h-full"
+                  >
+                    <div className="flex items-center gap-2 text-primary mb-2">
+                      <FiCheck className="shrink-0" /> Availability
+                    </div>
+                    <div>Open to work</div>
+                  </div>
+                </Reveal>
+              </div>
+            </div>
+          </Reveal>
+        </div>
       </div>
     </section>
   );

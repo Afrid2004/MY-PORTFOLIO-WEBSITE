@@ -1,25 +1,10 @@
 "use client";
 
-import React, { useRef } from "react";
-import { motion, useMotionValue, useSpring } from "motion/react";
+import React, { useRef, useState } from "react";
 
 const MagneticButton = ({ children, className = "" }) => {
   const ref = useRef(null);
-
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const springX = useSpring(x, {
-    stiffness: 150,
-    damping: 12,
-    mass: 0.5,
-  });
-
-  const springY = useSpring(y, {
-    stiffness: 150,
-    damping: 12,
-    mass: 0.5,
-  });
+  const [position, setPosition] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e) => {
     const rect = ref.current.getBoundingClientRect();
@@ -31,37 +16,34 @@ const MagneticButton = ({ children, className = "" }) => {
     const mouseY = e.clientY - centerY;
 
     const distance = Math.sqrt(mouseX ** 2 + mouseY ** 2);
-
     const radius = 100;
     const strength = 0.15;
 
     if (distance < radius) {
-      x.set(mouseX * strength);
-      y.set(mouseY * strength);
-    } else {
-      x.set(0);
-      y.set(0);
+      setPosition({
+        x: mouseX * strength,
+        y: mouseY * strength,
+      });
     }
   };
 
   const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
+    setPosition({ x: 0, y: 0 });
   };
 
   return (
-    <motion.div
+    <div
       ref={ref}
-      style={{
-        x: springX,
-        y: springY,
-      }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      style={{
+        transform: `translate(${position.x}px, ${position.y}px)`,
+        transition: "transform 0.2s ease-out",
+      }}
       className={`inline-block ${className}`}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };
 

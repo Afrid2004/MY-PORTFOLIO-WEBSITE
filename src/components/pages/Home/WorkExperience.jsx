@@ -85,7 +85,7 @@ const WorkExperience = () => {
         </Reveal>
 
         <div className="grid grid-cols-12 gap-5">
-          <div className="col-span-12 lg:col-span-3">
+          <div className="col-span-12 lg:col-span-4 2xl:col-span-3">
             <div className="flex flex-wrap lg:flex-nowrap lg:flex-col gap-5">
               {workExperiences.map((data, idx) => {
                 return (
@@ -121,7 +121,7 @@ const WorkExperience = () => {
               })}
             </div>
           </div>
-          <div className="col-span-12 lg:col-span-9">
+          <div className="col-span-12 lg:col-span-8 2xl:col-span-9">
             <Reveal
               key={filter}
               initial="opacity-0 translate-y-10"
@@ -143,7 +143,7 @@ const WorkExperience = () => {
                     </div>
 
                     {/* Duration */}
-                    <div className="flex flex-col items-start sm:items-end gap-2">
+                    <div className="flex flex-col items-start sm:items-end gap-2 shrink-0">
                       <span className="text-sm text-base-content/80">
                         {filteredWork.duration}
                       </span>
