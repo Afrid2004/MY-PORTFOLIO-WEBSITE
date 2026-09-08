@@ -14,6 +14,7 @@ import Reveal from "@/components/Reavel/Reavel";
 
 const Testimonials = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [swiper, setSwiper] = useState(null);
 
   const testimonials = [
     {
@@ -39,7 +40,7 @@ const Testimonials = () => {
   ];
 
   return (
-    <section className="relative overflow-x-hidden py-20">
+    <section className="relative py-20">
       <div className="container">
         {/* Section Header */}
         <div className="mx-auto max-w-3xl text-center">
@@ -94,6 +95,10 @@ const Testimonials = () => {
           <div className="relative mt-14">
             <Swiper
               modules={[Navigation, Autoplay]}
+              onSwiper={setSwiper}
+              onRealIndexChange={(swiper) => {
+                setActiveIndex(swiper.realIndex);
+              }}
               navigation={{
                 prevEl: ".testimonial-prev",
                 nextEl: ".testimonial-next",
@@ -118,14 +123,11 @@ const Testimonials = () => {
                   slidesPerView: 3,
                 },
               }}
-              onRealIndexChange={(swiper) => {
-                setActiveIndex(swiper.realIndex);
-              }}
               className="overflow-hidden! pb-2!"
             >
               {testimonials.map((testimonial, idx) => (
-                <SwiperSlide key={idx} className="!h-auto">
-                  <div className="group relative flex h-full min-h-[330px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] p-6 transition-all duration-500 hover:bg-white/[0.05]">
+                <SwiperSlide key={idx} className="h-auto!">
+                  <div className="group relative flex h-full min-h-82.5 flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] p-6 transition-all duration-500 hover:bg-white/[0.05]">
                     {/* Top */}
                     <div className="flex items-start justify-between">
                       {/* Quote Icon */}
@@ -190,12 +192,12 @@ const Testimonials = () => {
               {/* Previous */}
               <button
                 type="button"
-                className="testimonial-prev flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-base-content/60 transition-all duration-300 hover:border-primary hover:bg-primary hover:text-secondary"
+                className="testimonial-prev flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-base-content/60 transition-all duration-300 hover:border-primary hover:bg-primary hover:text-secondary active:scale-90"
                 aria-label="Previous testimonial"
               >
                 <FiArrowLeft size={18} />
               </button>
-
+              
               {/* Dynamic Pagination */}
               <div className="flex items-center justify-center gap-2">
                 {testimonials.map((_, index) => (
@@ -204,11 +206,7 @@ const Testimonials = () => {
                     type="button"
                     aria-label={`Go to testimonial ${index + 1}`}
                     onClick={() => {
-                      const swiper = document.querySelector(".swiper")?.swiper;
-
-                      if (swiper) {
-                        swiper.slideToLoop(index);
-                      }
+                      swiper?.slideToLoop(index);
                     }}
                     className={`h-[7px] cursor-pointer rounded-full transition-all duration-350 ${
                       activeIndex === index
@@ -218,11 +216,10 @@ const Testimonials = () => {
                   />
                 ))}
               </div>
-
               {/* Next */}
               <button
                 type="button"
-                className="testimonial-next flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-base-content/60 transition-all duration-300 hover:border-primary hover:bg-primary hover:text-secondary"
+                className="testimonial-next flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-base-content/60 transition-all duration-300 hover:border-primary hover:bg-primary hover:text-secondary active:scale-90"
                 aria-label="Next testimonial"
               >
                 <FiArrowRight size={18} />
