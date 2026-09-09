@@ -1,5 +1,5 @@
+import Blog from "@/app/blog/page";
 import About from "@/components/pages/Home/About";
-import Blog from "@/components/pages/Home/Blog";
 import Certifications from "@/components/pages/Home/Certifications";
 import EducationalBackground from "@/components/pages/Home/EducationlBackground";
 import Hero from "@/components/pages/Home/Hero";

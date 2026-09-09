@@ -177,7 +177,7 @@ const Testimonials = () => {
                           </h3>
 
                           <p className="mt-1 text-xs text-base-content/40">
-                            Client
+                            Friends
                           </p>
                         </div>
                       </div>

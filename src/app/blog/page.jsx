@@ -14,7 +14,7 @@ const Blog = () => {
       category: "Laravel & React",
       date: "Sep 05, 2026",
       readTime: "6 min read",
-      image: "/assets/images/blog/laravel-react.jpg",
+      image: "/assets/images/laravel-react.jpg",
       slug: "building-modern-web-applications-laravel-react",
     },
     {
@@ -25,7 +25,7 @@ const Blog = () => {
       category: "Next.js",
       date: "Aug 28, 2026",
       readTime: "5 min read",
-      image: "/assets/images/blog/nextjs-react.jpg",
+      image: "/assets/images/nextjs-react.jpg",
       slug: "nextjs-vs-react",
     },
     {
@@ -36,7 +36,7 @@ const Blog = () => {
       category: "Backend",
       date: "Aug 20, 2026",
       readTime: "7 min read",
-      image: "/assets/images/blog/laravel-api.jpg",
+      image: "/assets/images/laravel-api.jpg",
       slug: "rest-api-development-with-laravel",
     },
   ];
@@ -108,9 +108,11 @@ const Blog = () => {
                     </span>
                   </div>
                   {/* Title */}
-                  <h3 className="mt-4 line-clamp-2 text-xl font-semibold leading-8 transition-colors duration-300 group-hover:text-primary">
-                    {blog.title}
-                  </h3>
+                  <Link href={`/blog/${blog.slug}`}>
+                    <h3 className="mt-4 line-clamp-2 text-xl font-semibold leading-8 transition-colors duration-300 hover:text-primary">
+                      {blog.title}
+                    </h3>
+                  </Link>
                   {/* Excerpt */}
                   <p className="mt-3 line-clamp-2 text-sm leading-7 text-base-content/60">
                     {blog.excerpt}
@@ -162,7 +164,6 @@ const Blog = () => {
       <div className="pointer-events-none absolute -left-40 top-40 -z-10 select-none">
         <div className="h-100 w-100 rounded-full bg-[radial-gradient(circle,#209181_0%,transparent_70%)] blur-[120px]" />
       </div>
-
     </section>
   );
 };
