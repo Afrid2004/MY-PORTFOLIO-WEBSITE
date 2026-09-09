@@ -1,4 +1,4 @@
-import Blog from "@/app/blog/page";
+
 import About from "@/components/pages/Home/About";
 import Certifications from "@/components/pages/Home/Certifications";
 import EducationalBackground from "@/components/pages/Home/EducationlBackground";
@@ -9,7 +9,7 @@ import Skills from "@/components/pages/Home/Skills";
 import Stats from "@/components/pages/Home/Stats";
 import Testimonials from "@/components/pages/Home/Testimonial";
 import WorkExperience from "@/components/pages/Home/WorkExperience";
-import Image from "next/image";
+import Blog from "./blog/page";
 
 export default function Home() {
   return (
