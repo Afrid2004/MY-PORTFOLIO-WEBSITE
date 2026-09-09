@@ -1,4 +1,6 @@
 import About from "@/components/pages/Home/About";
+import Blog from "@/components/pages/Home/Blog";
+import Certifications from "@/components/pages/Home/Certifications";
 import EducationalBackground from "@/components/pages/Home/EducationlBackground";
 import Hero from "@/components/pages/Home/Hero";
 import Projects from "@/components/pages/Home/Projects";
@@ -35,6 +37,12 @@ export default function Home() {
 
       {/* projects section */}
       <Projects></Projects>
+
+      {/* certifications section */}
+      <Certifications></Certifications>
+
+      {/* blog section */}
+      <Blog></Blog>
 
       {/* testimonial section */}
       <Testimonials></Testimonials>
