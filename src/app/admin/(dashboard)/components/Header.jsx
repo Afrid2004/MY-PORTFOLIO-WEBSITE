@@ -97,7 +97,7 @@ const Header = ({ setSidebarOpen }) => {
               className="flex cursor-pointer items-center gap-2 rounded-xl px-2 py-1.5 transition-all hover:bg-base-content/5"
             >
               {/* Avatar */}
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-xs font-semibold text-primary-content">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-content">
                 FA
               </div>
 
@@ -124,7 +124,7 @@ const Header = ({ setSidebarOpen }) => {
               <div className="absolute right-0 top-[calc(100%+10px)] w-52 overflow-hidden rounded-2xl border border-base-content/10 bg-base-100 p-1.5 shadow-xl shadow-black/10">
                 {/* Profile Header */}
                 <div className="mb-1 flex items-center gap-3 rounded-xl bg-base-200 px-3 py-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-xs font-semibold text-primary-content">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-content">
                     FA
                   </div>
 
