@@ -7,6 +7,7 @@ import * as BsIcons from "react-icons/bs";
 import * as BiIcons from "react-icons/bi";
 import * as HiIcons from "react-icons/hi";
 import * as LuIcons from "react-icons/lu";
+import * as VscIcons from "react-icons/vsc";
 
 const icons = {
   ...Fa6Icons,
@@ -18,6 +19,7 @@ const icons = {
   ...BiIcons,
   ...HiIcons,
   ...LuIcons,
+  ...VscIcons
 };
 
 export const getIcon = (iconName) => {

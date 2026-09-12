@@ -4,6 +4,7 @@ const dbName = process.env.DB_NAME;
 
 export const collections = {
   users: "users",
+  skills: "skils",
 };
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {

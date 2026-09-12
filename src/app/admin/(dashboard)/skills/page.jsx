@@ -2,12 +2,28 @@
 
 import { formatUnderLineText } from "@/lib/formatText";
 import { getIcon } from "@/lib/iconLoader";
-import React, { useState } from "react";
-import { FiPlus, FiEdit2, FiTrash2, FiX, FiSearch } from "react-icons/fi";
+import React, { useEffect, useState } from "react";
+import {
+  FiPlus,
+  FiEdit2,
+  FiTrash2,
+  FiX,
+  FiSearch,
+  FiLoader,
+} from "react-icons/fi";
+import Swal from "sweetalert2";
+import SkillLoading from "../components/loadings/skillLoading";
+import Spin from "@/components/loadings/Spin";
 
 const SkillsPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingSkill, setEditingSkill] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [skills, setSkills] = useState([]);
+  const [search, setSearch] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -18,53 +34,29 @@ const SkillsPage = () => {
     status: true,
   });
 
-  const skills = [
-    {
-      id: 1,
-      name: "React.js",
-      category: "frontend",
-      level: 85,
-      color: "#61DAFB",
-      icon: "FaReact",
-      status: true,
-    },
-    {
-      id: 2,
-      name: "Next.js",
-      category: "frontend",
-      level: 80,
-      color: "#FFFFFF",
-      icon: "SiNextdotjs",
-      status: true,
-    },
-    {
-      id: 3,
-      name: "Laravel",
-      category: "backend",
-      level: 82,
-      color: "#FF2D20",
-      icon: "FaLaravel",
-      status: true,
-    },
-    {
-      id: 4,
-      name: "MongoDB",
-      category: "database",
-      level: 78,
-      color: "#47A248",
-      icon: "SiMongodb",
-      status: true,
-    },
-    {
-      id: 5,
-      name: "Git",
-      category: "tools_other",
-      level: 85,
-      color: "#F05032",
-      icon: "FaGitAlt",
-      status: true,
-    },
-  ];
+  // Get all skills
+  const fetchSkills = async () => {
+    try {
+      setLoading(true);
+
+      const res = await fetch("/api/skills");
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to fetch data!");
+      }
+
+      setSkills(data);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSkills();
+  }, []);
 
   // Handle all input changes
   const handleChange = (event) => {
@@ -76,8 +68,14 @@ const SkillsPage = () => {
     }));
   };
 
+  //search data
+  const filteredSkills = skills.filter((skill) =>
+    skill.name.toLowerCase().includes(search.toLowerCase()),
+  );
+
   // Create skill
   const handleCreate = () => {
+    setError("");
     setEditingSkill(null);
 
     setFormData({
@@ -94,7 +92,9 @@ const SkillsPage = () => {
 
   // Edit skill
   const handleEdit = (skill) => {
+    setError("");
     setEditingSkill(skill);
+
     setFormData({
       name: skill.name,
       category: skill.category,
@@ -109,22 +109,132 @@ const SkillsPage = () => {
 
   // Close modal
   const handleCloseModal = () => {
+    if (submitting) {
+      return;
+    }
+
     setModalOpen(false);
   };
 
   // Submit form
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    console.log("Form Data:", formData);
+    setError("");
 
-    if (!editingSkill) {
-      console.log("Creating new skill");
-    } else {
-      console.log("Updating skill:", editingSkill.id);
+    try {
+      setSubmitting(true);
+
+      let url = "/api/skills";
+      let method = "POST";
+
+      if (editingSkill) {
+        url = `/api/skills/${editingSkill._id}`;
+        method = "PATCH";
+      }
+
+      const res = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "Something went wrong!");
+        return;
+      }
+
+      const wasEditing = editingSkill;
+
+      setModalOpen(false);
+      setEditingSkill(null);
+
+      setFormData({
+        name: "",
+        category: "",
+        level: 80,
+        color: "#DBFF00",
+        icon: "",
+        status: true,
+      });
+
+      await fetchSkills();
+
+      await Swal.fire({
+        icon: "success",
+        title: wasEditing ? "Skill Updated!" : "Skill Created!",
+        text: wasEditing
+          ? "Skill has been updated successfully."
+          : "Skill has been created successfully.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      setError(error.message || "Something went wrong!");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Delete skill
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: "Delete Skill?",
+      text: "You won't be able to undo this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+    });
+
+    if (!result.isConfirmed) {
+      return;
     }
 
-    setModalOpen(false);
+    try {
+      setDeletingId(id);
+
+      const res = await fetch(`/api/skills/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        Swal.fire({
+          icon: "error",
+          title: "Delete Failed!",
+          text: data.message || "Failed to delete skill",
+        });
+
+        return;
+      }
+
+      setSkills((prev) => prev.filter((skill) => skill._id !== id));
+
+      await Swal.fire({
+        icon: "success",
+        title: "Deleted!",
+        text: "Skill has been deleted successfully.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      await Swal.fire({
+        icon: "error",
+        title: "Something went wrong!",
+        text: error.message,
+      });
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   return (
@@ -157,12 +267,13 @@ const SkillsPage = () => {
           <input
             type="text"
             placeholder="Search skills..."
+            onChange={(e) => setSearch(e.target.value)}
             className="w-full bg-transparent text-sm outline-none placeholder:text-base-content/30"
           />
         </div>
 
         <div className="text-xs text-base-content/40">
-          {skills.length} Skills
+          {filteredSkills.length} Skills
         </div>
       </div>
 
@@ -179,103 +290,188 @@ const SkillsPage = () => {
 
         {/* Skills */}
         <div className="divide-y divide-base-content/10">
-          {skills.map((skill) => {
-            const Icon = getIcon(skill.icon);
+          {loading ? (
+            <SkillLoading />
+          ) : error && skills.length === 0 ? (
+            <div className="px-5 py-10 text-center">
+              <p className="text-sm text-error">{error}</p>
+            </div>
+          ) : filteredSkills.length === 0 ? (
+            <div className="flex flex-col items-center justify-center px-5 py-14 text-center">
+              <p className="text-sm font-medium text-base-content/50">
+                No skills found
+              </p>
 
-            return (
-              <div
-                key={skill.id}
-                className="grid grid-cols-1 gap-4 px-5 py-5 transition-colors hover:bg-base-content/[0.02] md:grid-cols-12 md:items-center md:gap-0"
-              >
-                {/* Skill */}
-                <div className="md:col-span-4">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border"
-                      style={{
-                        color: skill.color,
-                        borderColor: `${skill.color}30`,
-                        backgroundColor: `${skill.color}12`,
-                      }}
-                    >
-                      {Icon && <Icon />}
-                    </div>
+              <p className="mt-1 text-xs text-base-content/30">
+                {search
+                  ? "No skills match your search."
+                  : "Create your first skill to get started."}
+              </p>
 
-                    <div>
-                      <p className="text-sm font-medium">{skill.name}</p>
+              {!search && (
+                <button
+                  type="button"
+                  onClick={handleCreate}
+                  className="mt-5 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-content transition-all duration-200 active:scale-[.95] sm:w-fit"
+                >
+                  <FiPlus size={17} />
+                  Create Skill
+                </button>
+              )}
+            </div>
+          ) : (
+            filteredSkills.map((skill) => {
+              const Icon = getIcon(skill.icon);
 
-                      <p className="mt-0.5 text-[11px] text-base-content/35">
-                        Skill #{skill.id}
-                      </p>
+              return (
+                <div
+                  key={skill._id}
+                  className="grid grid-cols-1 gap-4 px-4 py-4 transition-colors hover:bg-base-content/[0.02] sm:px-5 sm:py-5 md:grid-cols-12 md:items-center md:gap-0"
+                >
+                  {/* Skill */}
+                  <div className="min-w-0 md:col-span-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div
+                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border"
+                          style={{
+                            color: skill.color,
+                            borderColor: `${skill.color}25`,
+                            backgroundColor: `${skill.color}30`,
+                          }}
+                        >
+                          {Icon && <Icon />}
+                        </div>
+
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-medium">
+                            {skill.name}
+                          </p>
+
+                          <p className="mt-0.5 truncate text-[11px] text-base-content/35">
+                            Skill #{String(skill._id).slice(-6)}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Actions - Mobile */}
+                      <div className="flex shrink-0 items-center gap-2 md:hidden">
+                        <button
+                          type="button"
+                          onClick={() => handleEdit(skill)}
+                          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
+                          title="Edit"
+                        >
+                          <FiEdit2 size={15} />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(skill._id)}
+                          disabled={deletingId === skill._id}
+                          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                          title="Delete"
+                        >
+                          {deletingId === skill._id ? (
+                            <FiLoader size={15} className="animate-spin" />
+                          ) : (
+                            <FiTrash2 size={15} />
+                          )}
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Category */}
-                <div className="md:col-span-2">
-                  <span className="capitalize rounded-full border border-base-content/10 bg-base-200 px-2.5 py-1 text-[11px] text-base-content/55">
-                    {formatUnderLineText(skill.category, " & ")}
-                  </span>
-                </div>
+                  {/* Category */}
+                  <div className="md:col-span-2">
+                    <div className="flex items-center justify-between gap-3 md:block">
+                      <span className="text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
+                        Category
+                      </span>
 
-                {/* Level */}
-                <div className="md:col-span-3">
-                  <div className="flex max-w-52 items-center gap-3">
-                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-base-content/10">
-                      <div
-                        className="h-full rounded-full"
-                        style={{
-                          width: `${skill.level}%`,
-                          backgroundColor: skill.color,
-                        }}
-                      />
+                      <span className="inline-flex max-w-full rounded-full border border-base-content/10 bg-base-200 px-2.5 py-1 text-[11px] capitalize text-base-content/55">
+                        {formatUnderLineText(skill.category, " & ")}
+                      </span>
                     </div>
+                  </div>
 
-                    <span
-                      className="w-9 text-right text-xs font-medium"
-                      style={{ color: skill.color }}
+                  {/* Level */}
+                  <div className="md:col-span-3">
+                    <div className="flex items-center justify-between gap-4 md:block">
+                      <span className="text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
+                        Level
+                      </span>
+
+                      <div className="flex w-full max-w-52 items-center gap-3 md:w-auto">
+                        <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-base-content/10">
+                          <div
+                            className="h-full rounded-full transition-all duration-500"
+                            style={{
+                              width: `${skill.level}%`,
+                              backgroundColor: skill.color,
+                            }}
+                          />
+                        </div>
+
+                        <span
+                          className="w-9 shrink-0 text-right text-xs font-medium"
+                          style={{ color: skill.color }}
+                        >
+                          {skill.level}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Status */}
+                  <div className="md:col-span-2">
+                    <div className="flex items-center justify-between gap-3 md:block">
+                      <span className="text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
+                        Status
+                      </span>
+
+                      {skill.status ? (
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-[11px] font-medium text-success">
+                          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-success" />
+                          Active
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-base-content/10 bg-base-content/5 px-2.5 py-1 text-[11px] font-medium text-base-content/40">
+                          Inactive
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Actions - Desktop */}
+                  <div className="hidden items-center justify-end gap-2 md:col-span-1 md:flex">
+                    <button
+                      type="button"
+                      onClick={() => handleEdit(skill)}
+                      className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
+                      title="Edit"
                     >
-                      {skill.level}%
-                    </span>
+                      <FiEdit2 size={15} />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(skill._id)}
+                      disabled={deletingId === skill._id}
+                      className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                      title="Delete"
+                    >
+                      {deletingId === skill._id ? (
+                        <FiLoader size={15} className="animate-spin" />
+                      ) : (
+                        <FiTrash2 size={15} />
+                      )}
+                    </button>
                   </div>
                 </div>
-
-                {/* Status */}
-                <div className="md:col-span-2">
-                  {skill.status ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-[11px] font-medium text-success">
-                      <span className="h-1.5 w-1.5 rounded-full bg-success" />
-                      Active
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-base-content/10 bg-base-content/5 px-2.5 py-1 text-[11px] font-medium text-base-content/40">
-                      Inactive
-                    </span>
-                  )}
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center justify-start gap-2 md:col-span-1 md:justify-end">
-                  <button
-                    type="button"
-                    onClick={() => handleEdit(skill)}
-                    className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
-                    title="Edit"
-                  >
-                    <FiEdit2 size={15} />
-                  </button>
-
-                  <button
-                    type="button"
-                    className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all"
-                    title="Delete"
-                  >
-                    <FiTrash2 size={15} />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </div>
 
@@ -311,7 +507,8 @@ const SkillsPage = () => {
             <button
               type="button"
               onClick={handleCloseModal}
-              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-base-content/40 transition-colors hover:bg-base-content/5 hover:text-base-content"
+              disabled={submitting}
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-base-content/40 transition-colors hover:bg-base-content/5 hover:text-base-content disabled:cursor-not-allowed disabled:opacity-50"
             >
               <FiX size={18} />
             </button>
@@ -319,6 +516,13 @@ const SkillsPage = () => {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5 p-5">
+            {/* Error Message */}
+            {error && (
+              <div className="rounded-lg border border-error/20 bg-error/10 px-3.5 py-3">
+                <p className="text-xs font-medium text-error">{error}</p>
+              </div>
+            )}
+
             {/* Skill Name */}
             <div>
               <label className="mb-2 block text-xs font-medium text-base-content/70">
@@ -373,11 +577,8 @@ const SkillsPage = () => {
                 </option>
 
                 <option value="frontend">Frontend</option>
-
                 <option value="backend">Backend</option>
-
                 <option value="database">Database</option>
-
                 <option value="tools_other">Tools & Other</option>
               </select>
             </div>
@@ -389,9 +590,7 @@ const SkillsPage = () => {
                   Skill Level
                 </label>
 
-                <span className="text-xs text-primary">
-                  {formData.level}%
-                </span>
+                <span className="text-xs text-primary">{formData.level}%</span>
               </div>
 
               <input
@@ -428,7 +627,7 @@ const SkillsPage = () => {
                   value={formData.color}
                   onChange={handleChange}
                   placeholder="#DBFF00"
-                  className="flex-1 rounded-xl border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-primary/40"
+                  className="flex-1 rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-primary/40"
                 />
               </div>
             </div>
@@ -457,16 +656,25 @@ const SkillsPage = () => {
               <button
                 type="button"
                 onClick={handleCloseModal}
-                className="cursor-pointer rounded-xl border border-base-content/10 px-4 py-2.5 text-sm text-base-content/55 transition-colors hover:bg-base-content/5 hover:text-base-content"
+                disabled={submitting}
+                className="cursor-pointer rounded-lg border border-base-content/10 px-4 py-2.5 text-sm text-base-content/55 transition-colors hover:bg-base-content/5 hover:text-base-content disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Cancel
               </button>
 
               <button
                 type="submit"
-                className="cursor-pointer rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-content transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/10"
+                disabled={submitting}
+                className="inline-flex min-w-32 cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-content transition-all active:scale[.95] disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {editingSkill ? "Update Skill" : "Create Skill"}
+                {submitting ? (
+                  <>
+                    <Spin />
+                    {editingSkill ? "Updating..." : "Creating..."}
+                  </>
+                ) : (
+                  <>{editingSkill ? "Update Skill" : "Create Skill"}</>
+                )}
               </button>
             </div>
           </form>
