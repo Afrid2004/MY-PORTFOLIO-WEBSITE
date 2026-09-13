@@ -8,7 +8,10 @@ export async function GET() {
     const skillsCollection = await dbConnect(collections.skills);
     const result = await skillsCollection
       .find()
-      .sort({ createdAt: -1 })
+      .sort({
+        order: 1,
+        createdAt: 1,
+      })
       .toArray();
     return Response.json(result);
   } catch (error) {
@@ -65,6 +68,15 @@ export async function POST(request) {
       );
     }
 
+    const lastSkill = await skillsCollection
+      .find()
+      .sort({ order: -1 })
+      .limit(1)
+      .next();
+
+    const nextOrder =
+      typeof lastSkill?.order === "number" ? lastSkill.order + 1 : 0;
+
     const newSkill = {
       name: data.name.trim(),
       icon: data.icon.trim(),
@@ -72,6 +84,7 @@ export async function POST(request) {
       level: Number(data.level),
       color: data.color.trim(),
       status: data.status ?? true,
+      order: nextOrder,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

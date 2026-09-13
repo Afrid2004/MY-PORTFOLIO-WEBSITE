@@ -14,6 +14,7 @@ import {
 import Swal from "sweetalert2";
 import SkillLoading from "../components/loadings/skillLoading";
 import Spin from "@/components/loadings/Spin";
+import ReorderList from "../components/reorder/ReorderList";
 
 const SkillsPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -51,6 +52,34 @@ const SkillsPage = () => {
       setError(error.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // reorder
+  const handleReorder = async (reorderedSkills) => {
+    setSkills(reorderedSkills);
+
+    try {
+      const res = await fetch("/api/skills/reorder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ids: reorderedSkills.map((skill) => skill._id),
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to update skill order!");
+      }
+    } catch (error) {
+      setError(error.message);
+
+      // Restore data from database
+      fetchSkills();
     }
   };
 
@@ -320,157 +349,159 @@ const SkillsPage = () => {
               )}
             </div>
           ) : (
-            filteredSkills.map((skill) => {
-              const Icon = getIcon(skill.icon);
+            <ReorderList items={filteredSkills} onReorder={handleReorder}>
+              {(skill) => {
+                const Icon = getIcon(skill.icon);
 
-              return (
-                <div
-                  key={skill._id}
-                  className="grid grid-cols-1 gap-4 px-4 py-4 transition-colors hover:bg-base-content/[0.02] sm:px-5 sm:py-5 md:grid-cols-12 md:items-center md:gap-0"
-                >
-                  {/* Skill */}
-                  <div className="min-w-0 md:col-span-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="flex min-w-0 items-center gap-3">
-                        <div
-                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border"
-                          style={{
-                            color: skill.color,
-                            borderColor: `${skill.color}25`,
-                            backgroundColor: `${skill.color}30`,
-                          }}
-                        >
-                          {Icon && <Icon />}
-                        </div>
-
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-medium">
-                            {skill.name}
-                          </p>
-
-                          <p className="mt-0.5 truncate text-[11px] text-base-content/35">
-                            Skill #{String(skill._id).slice(-6)}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Actions - Mobile */}
-                      <div className="flex shrink-0 items-center gap-2 md:hidden">
-                        <button
-                          type="button"
-                          onClick={() => handleEdit(skill)}
-                          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
-                          title="Edit"
-                        >
-                          <FiEdit2 size={15} />
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(skill._id)}
-                          disabled={deletingId === skill._id}
-                          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
-                          title="Delete"
-                        >
-                          {deletingId === skill._id ? (
-                            <FiLoader size={15} className="animate-spin" />
-                          ) : (
-                            <FiTrash2 size={15} />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Category */}
-                  <div className="md:col-span-2">
-                    <div className="flex items-center justify-between gap-3 md:block">
-                      <span className="text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
-                        Category
-                      </span>
-
-                      <span className="inline-flex max-w-full rounded-full border border-base-content/10 bg-base-200 px-2.5 py-1 text-[11px] capitalize text-base-content/55">
-                        {formatUnderLineText(skill.category, " & ")}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Level */}
-                  <div className="md:col-span-3">
-                    <div className="flex items-center justify-between gap-4 md:block">
-                      <span className="text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
-                        Level
-                      </span>
-
-                      <div className="flex w-full max-w-52 items-center gap-3 md:w-auto">
-                        <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-base-content/10">
+                return (
+                  <div
+                    key={skill._id}
+                    className="grid grid-cols-1 gap-4 px-4 py-4 transition-colors hover:bg-base-content/[0.02] sm:px-5 sm:py-5 md:grid-cols-12 md:items-center md:gap-0"
+                  >
+                    {/* Skill */}
+                    <div className="min-w-0 md:col-span-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex min-w-0 items-center gap-3">
                           <div
-                            className="h-full rounded-full transition-all duration-500"
+                            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border"
                             style={{
-                              width: `${skill.level}%`,
-                              backgroundColor: skill.color,
+                              color: skill.color,
+                              borderColor: `${skill.color}25`,
+                              backgroundColor: `${skill.color}30`,
                             }}
-                          />
+                          >
+                            {Icon && <Icon />}
+                          </div>
+
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-medium">
+                              {skill.name}
+                            </p>
+
+                            <p className="mt-0.5 truncate text-[11px] text-base-content/35">
+                              Skill #{String(skill._id).slice(-6)}
+                            </p>
+                          </div>
                         </div>
 
-                        <span
-                          className="w-9 shrink-0 text-right text-xs font-medium"
-                          style={{ color: skill.color }}
-                        >
-                          {skill.level}%
+                        {/* Actions - Mobile */}
+                        <div className="flex shrink-0 items-center gap-2 md:hidden">
+                          <button
+                            type="button"
+                            onClick={() => handleEdit(skill)}
+                            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
+                            title="Edit"
+                          >
+                            <FiEdit2 size={15} />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(skill._id)}
+                            disabled={deletingId === skill._id}
+                            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                            title="Delete"
+                          >
+                            {deletingId === skill._id ? (
+                              <FiLoader size={15} className="animate-spin" />
+                            ) : (
+                              <FiTrash2 size={15} />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Category */}
+                    <div className="md:col-span-2">
+                      <div className="flex items-center justify-between gap-3 md:block">
+                        <span className="text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
+                          Category
+                        </span>
+
+                        <span className="inline-flex max-w-full rounded-full border border-base-content/10 bg-base-200 px-2.5 py-1 text-[11px] capitalize text-base-content/55">
+                          {formatUnderLineText(skill.category, " & ")}
                         </span>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Status */}
-                  <div className="md:col-span-2">
-                    <div className="flex items-center justify-between gap-3 md:block">
-                      <span className="text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
-                        Status
-                      </span>
+                    {/* Level */}
+                    <div className="md:col-span-3">
+                      <div className="flex items-center justify-between gap-4 md:block">
+                        <span className="text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
+                          Level
+                        </span>
 
-                      {skill.status ? (
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-[11px] font-medium text-success">
-                          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-success" />
-                          Active
+                        <div className="flex w-full max-w-52 items-center gap-3 md:w-auto">
+                          <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-base-content/10">
+                            <div
+                              className="h-full rounded-full transition-all duration-500"
+                              style={{
+                                width: `${skill.level}%`,
+                                backgroundColor: skill.color,
+                              }}
+                            />
+                          </div>
+
+                          <span
+                            className="w-9 shrink-0 text-right text-xs font-medium"
+                            style={{ color: skill.color }}
+                          >
+                            {skill.level}%
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Status */}
+                    <div className="md:col-span-2">
+                      <div className="flex items-center justify-between gap-3 md:block">
+                        <span className="text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
+                          Status
                         </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-base-content/10 bg-base-content/5 px-2.5 py-1 text-[11px] font-medium text-base-content/40">
-                          Inactive
-                        </span>
-                      )}
+
+                        {skill.status ? (
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-[11px] font-medium text-success">
+                            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-success" />
+                            Active
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-base-content/10 bg-base-content/5 px-2.5 py-1 text-[11px] font-medium text-base-content/40">
+                            Inactive
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Actions - Desktop */}
+                    <div className="hidden items-center justify-end gap-2 md:col-span-1 md:flex">
+                      <button
+                        type="button"
+                        onClick={() => handleEdit(skill)}
+                        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
+                        title="Edit"
+                      >
+                        <FiEdit2 size={15} />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(skill._id)}
+                        disabled={deletingId === skill._id}
+                        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                        title="Delete"
+                      >
+                        {deletingId === skill._id ? (
+                          <FiLoader size={15} className="animate-spin" />
+                        ) : (
+                          <FiTrash2 size={15} />
+                        )}
+                      </button>
                     </div>
                   </div>
-
-                  {/* Actions - Desktop */}
-                  <div className="hidden items-center justify-end gap-2 md:col-span-1 md:flex">
-                    <button
-                      type="button"
-                      onClick={() => handleEdit(skill)}
-                      className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
-                      title="Edit"
-                    >
-                      <FiEdit2 size={15} />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(skill._id)}
-                      disabled={deletingId === skill._id}
-                      className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
-                      title="Delete"
-                    >
-                      {deletingId === skill._id ? (
-                        <FiLoader size={15} className="animate-spin" />
-                      ) : (
-                        <FiTrash2 size={15} />
-                      )}
-                    </button>
-                  </div>
-                </div>
-              );
-            })
+                );
+              }}
+            </ReorderList>
           )}
         </div>
       </div>
