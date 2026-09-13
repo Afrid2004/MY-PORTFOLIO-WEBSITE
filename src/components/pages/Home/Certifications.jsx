@@ -80,7 +80,7 @@ const Certifications = () => {
     const filteredCertification = certifications[filter];
 
     return (
-      <section className="relative py-20 overflow-x-hidden">
+      <section className="relative py-20 overflow-x-clip">
         <div className="container relative z-10">
           {/* Section Header */}
           <Reveal

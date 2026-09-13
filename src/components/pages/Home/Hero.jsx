@@ -9,7 +9,7 @@ import Reveal from "@/components/Reavel/Reavel";
 
 const Hero = () => {
   return (
-    <div className="relative">
+    <div className="relative overflow-x-clip">
       <div className="py-30 container">
         <div className="py-10">
           <div className="grid grid-cols-12 lg:gap-10">
@@ -135,9 +135,7 @@ const Hero = () => {
       </div>
 
       <div className="absolute top-20 -left-10 md:-left-60 lg:-left-80 pointer-events-none select-none -z-1">
-        <div
-          className="w-75 h-75 md:w-[550px] md:h-[550px] lg:w-[700px] lg:h-[700px] rounded-full blur-[100px] md:blur-[140px] bg-[radial-gradient(circle,#209181_0%,transparent_70%)]"
-        />
+        <div className="w-75 h-75 md:w-[550px] md:h-[550px] lg:w-[700px] lg:h-[700px] rounded-full blur-[100px] md:blur-[140px] bg-[radial-gradient(circle,#209181_0%,transparent_70%)]" />
       </div>
 
       <div className="absolute bottom-0 right-10 pointer-events-none select-none -z-1">

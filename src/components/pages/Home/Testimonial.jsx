@@ -40,7 +40,7 @@ const Testimonials = () => {
   ];
 
   return (
-    <section className="relative py-20 overflow-x-hidden">
+    <section className="relative py-20 overflow-x-clip">
       <div className="container">
         {/* Section Header */}
         <div className="mx-auto max-w-3xl text-center">
@@ -197,7 +197,7 @@ const Testimonials = () => {
               >
                 <FiArrowLeft size={18} />
               </button>
-              
+
               {/* Dynamic Pagination */}
               <div className="flex items-center justify-center gap-2">
                 {testimonials.map((_, index) => (

@@ -55,7 +55,7 @@ const WorkExperience = () => {
 
   const filteredWork = workExperiences[filter];
   return (
-    <section className="py-20 relative">
+    <section className="py-20 relative ">
       <div className="container relative z-10">
         <Reveal
           initial="opacity-0 translate-y-6"
