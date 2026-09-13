@@ -114,7 +114,7 @@ const EducationalBackground = () => {
 
   const filteredEducation = educations[filter];
   return (
-    <section className="py-20 relative">
+    <section className="py-20 relative overflow-x-hidden">
       <div className="container relative z-10">
         <Reveal
           initial="opacity-0 translate-y-6"

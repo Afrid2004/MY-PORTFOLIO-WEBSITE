@@ -40,7 +40,7 @@ const Testimonials = () => {
   ];
 
   return (
-    <section className="relative py-20">
+    <section className="relative py-20 overflow-x-hidden">
       <div className="container">
         {/* Section Header */}
         <div className="mx-auto max-w-3xl text-center">
