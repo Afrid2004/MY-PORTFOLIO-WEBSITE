@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+
 import { DndContext, closestCenter } from "@dnd-kit/core";
 
 import {
@@ -45,7 +46,7 @@ const ReorderList = ({
       >
         {items.map((item) => (
           <SortableItem key={getId(item)} id={getId(item)}>
-            {children(item)}
+            {(sortableProps) => children(item, sortableProps)}
           </SortableItem>
         ))}
       </SortableContext>

@@ -18,12 +18,17 @@ export async function POST(request) {
   }
 
   try {
-    const { ids } = await request.json();
+    const { type, ids } = await request.json();
 
-    if (!Array.isArray(ids)) {
+    const allowedCollections = {
+      skills: collections.skills,
+      services: collections.services,
+    };
+
+    if (!allowedCollections[type]) {
       return Response.json(
         {
-          message: "Invalid skill order!",
+          message: "Invalid reorder type!",
         },
         {
           status: 400,
@@ -31,7 +36,20 @@ export async function POST(request) {
       );
     }
 
-    const skillsCollection = await dbConnect(collections.skills);
+    if (!Array.isArray(ids)) {
+      return Response.json(
+        {
+          message: "Invalid order data!",
+        },
+        {
+          status: 400,
+        },
+      );
+    }
+
+    const collection = await dbConnect(
+      allowedCollections[type],
+    );
 
     const operations = ids.map((id, index) => ({
       updateOne: {
@@ -48,16 +66,16 @@ export async function POST(request) {
     }));
 
     if (operations.length > 0) {
-      await skillsCollection.bulkWrite(operations);
+      await collection.bulkWrite(operations);
     }
 
     return Response.json({
-      message: "Skill order updated successfully!",
+      message: "Order updated successfully!",
     });
   } catch (error) {
     return Response.json(
       {
-        message: "Failed to update skill order!",
+        message: "Failed to update order!",
       },
       {
         status: 500,

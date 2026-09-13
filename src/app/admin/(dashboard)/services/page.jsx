@@ -1,8 +1,7 @@
 "use client";
 
-import { formatUnderLineText } from "@/lib/formatText";
-import { getIcon } from "@/lib/iconLoader";
 import React, { useEffect, useState } from "react";
+
 import {
   FiPlus,
   FiEdit2,
@@ -12,44 +11,48 @@ import {
   FiLoader,
   FiMenu,
 } from "react-icons/fi";
+
 import Swal from "sweetalert2";
-import SkillLoading from "../components/loadings/skillLoading";
+
+import { getIcon } from "@/lib/iconLoader";
+
+import ServicesLoading from "../components/loadings/serviceLoading";
 import Spin from "@/components/loadings/Spin";
 import ReorderList from "../components/reorder/ReorderList";
 
-
-const SkillsPage = () => {
+const ServicesPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingSkill, setEditingSkill] = useState(null);
+  const [editingService, setEditingService] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const [skills, setSkills] = useState([]);
+  const [services, setServices] = useState([]);
   const [search, setSearch] = useState("");
 
   const [formData, setFormData] = useState({
-    name: "",
-    category: "",
-    level: 80,
-    color: "#DBFF00",
-    icon: "",
+    title: "",
+    description: "",
+    icon: "FaCode",
     status: true,
   });
 
-  // Get all skills
-  const fetchSkills = async () => {
+  // Get all services
+  const fetchServices = async () => {
     try {
       setLoading(true);
 
-      const res = await fetch("/api/skills");
+      const res = await fetch("/api/services", {
+        cache: "no-store",
+      });
+
       const data = await res.json();
 
       if (!res.ok) {
         throw new Error(data.message || "Failed to fetch data!");
       }
 
-      setSkills(data);
+      setServices(data);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -57,9 +60,9 @@ const SkillsPage = () => {
     }
   };
 
-  // reorder
-  const handleReorder = async (reorderedSkills) => {
-    setSkills(reorderedSkills);
+  // Reorder services
+  const handleReorder = async (reorderedServices) => {
+    setServices(reorderedServices);
 
     try {
       const res = await fetch("/api/reorder", {
@@ -68,26 +71,31 @@ const SkillsPage = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          type: "skills",
-          ids: reorderedSkills.map((skill) => skill._id),
+          type: "services",
+          ids: reorderedServices.map((service) => service._id),
         }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed to update skill order!");
+        throw new Error(data.message || "Failed to update service order!");
       }
     } catch (error) {
       setError(error.message);
 
-      await fetchSkills();
+      await fetchServices();
     }
   };
 
   useEffect(() => {
-    fetchSkills();
+    fetchServices();
   }, []);
+
+  // Search data
+  const filteredServices = services.filter((service) =>
+    service.title.toLowerCase().includes(search.toLowerCase()),
+  );
 
   // Handle all input changes
   const handleChange = (event) => {
@@ -99,40 +107,31 @@ const SkillsPage = () => {
     }));
   };
 
-  //search data
-  const filteredSkills = skills.filter((skill) =>
-    skill.name.toLowerCase().includes(search.toLowerCase()),
-  );
-
-  // Create skill
+  // Create service
   const handleCreate = () => {
     setError("");
-    setEditingSkill(null);
+    setEditingService(null);
 
     setFormData({
-      name: "",
-      category: "",
-      level: 80,
-      color: "#DBFF00",
-      icon: "",
+      title: "",
+      description: "",
+      icon: "FaCode",
       status: true,
     });
 
     setModalOpen(true);
   };
 
-  // Edit skill
-  const handleEdit = (skill) => {
+  // Edit service
+  const handleEdit = (service) => {
     setError("");
-    setEditingSkill(skill);
+    setEditingService(service);
 
     setFormData({
-      name: skill.name,
-      category: skill.category,
-      level: skill.level,
-      color: skill.color,
-      icon: skill.icon,
-      status: skill.status,
+      title: service.title,
+      description: service.description,
+      icon: service.icon,
+      status: service.status,
     });
 
     setModalOpen(true);
@@ -150,24 +149,23 @@ const SkillsPage = () => {
   // Submit form
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     setError("");
 
     try {
       setSubmitting(true);
 
-      let url = "/api/skills";
+      let url = "/api/services";
       let method = "POST";
 
-      if (editingSkill) {
-        url = `/api/skills/${editingSkill._id}`;
+      if (editingService) {
+        url = `/api/services/${editingService._id}`;
         method = "PATCH";
       }
 
       const res = await fetch(url, {
         method: method,
         headers: {
-          "Content-type": "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
@@ -179,28 +177,26 @@ const SkillsPage = () => {
         return;
       }
 
-      const wasEditing = editingSkill;
+      const wasEditing = editingService;
 
       setModalOpen(false);
-      setEditingSkill(null);
+      setEditingService(null);
 
       setFormData({
-        name: "",
-        category: "",
-        level: 80,
-        color: "#DBFF00",
-        icon: "",
+        title: "",
+        description: "",
+        icon: "FaCode",
         status: true,
       });
 
-      await fetchSkills();
+      await fetchServices();
 
       await Swal.fire({
         icon: "success",
-        title: wasEditing ? "Skill Updated!" : "Skill Created!",
+        title: wasEditing ? "Service Updated!" : "Service Created!",
         text: wasEditing
-          ? "Skill has been updated successfully."
-          : "Skill has been created successfully.",
+          ? "Service has been updated successfully."
+          : "Service has been created successfully.",
         timer: 1500,
         showConfirmButton: false,
       });
@@ -211,10 +207,10 @@ const SkillsPage = () => {
     }
   };
 
-  // Delete skill
+  // Delete service
   const handleDelete = async (id) => {
     const result = await Swal.fire({
-      title: "Delete Skill?",
+      title: "Delete Service?",
       text: "You won't be able to undo this!",
       icon: "warning",
       showCancelButton: true,
@@ -232,28 +228,28 @@ const SkillsPage = () => {
     try {
       setDeletingId(id);
 
-      const res = await fetch(`/api/skills/${id}`, {
+      const res = await fetch(`/api/services/${id}`, {
         method: "DELETE",
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        Swal.fire({
+        await Swal.fire({
           icon: "error",
           title: "Delete Failed!",
-          text: data.message || "Failed to delete skill",
+          text: data.message || "Failed to delete service",
         });
 
         return;
       }
 
-      setSkills((prev) => prev.filter((skill) => skill._id !== id));
+      setServices((prev) => prev.filter((service) => service._id !== id));
 
       await Swal.fire({
         icon: "success",
         title: "Deleted!",
-        text: "Skill has been deleted successfully.",
+        text: "Service has been deleted successfully.",
         timer: 1500,
         showConfirmButton: false,
       });
@@ -273,10 +269,10 @@ const SkillsPage = () => {
       {/* Page Header */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Skills</h1>
+          <h1 className="text-2xl font-semibold">Services</h1>
 
           <p className="mt-1 text-sm text-base-content/45">
-            Manage the technologies and tools displayed on your portfolio.
+            Manage the services displayed on your portfolio.
           </p>
         </div>
 
@@ -286,57 +282,57 @@ const SkillsPage = () => {
           className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-content transition-all duration-200 active:scale-[.95] sm:w-fit"
         >
           <FiPlus size={17} />
-          Create Skill
+          Create Service
         </button>
       </div>
 
-      {/* Search + Filter */}
+      {/* Search */}
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex w-full items-center gap-2 rounded-xl border border-base-content/10 bg-base-100 px-3 py-2.5 sm:max-w-sm">
           <FiSearch size={16} className="shrink-0 text-base-content/35" />
 
           <input
             type="text"
-            placeholder="Search skills..."
+            placeholder="Search services..."
+            value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full bg-transparent text-sm outline-none placeholder:text-base-content/30"
           />
         </div>
 
         <div className="text-xs text-base-content/40">
-          {filteredSkills.length} Skills
+          {filteredServices.length} Services
         </div>
       </div>
 
-      {/* Skills Table */}
+      {/* Services Table */}
       <div className="overflow-hidden rounded-2xl border border-base-content/10 bg-base-100">
         {/* Table Header */}
         <div className="hidden grid-cols-12 border-b border-base-content/10 bg-base-200 px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-base-content/35 md:grid">
-          <div className="col-span-4">Skill</div>
-          <div className="col-span-2">Category</div>
-          <div className="col-span-3">Level</div>
+          <div className="col-span-5">Service</div>
+          <div className="col-span-3">Description</div>
           <div className="col-span-2">Status</div>
-          <div className="col-span-1 text-right">Action</div>
+          <div className="col-span-2 text-right">Action</div>
         </div>
 
-        {/* Skills */}
+        {/* Services */}
         <div className="divide-y divide-base-content/10">
           {loading ? (
-            <SkillLoading />
-          ) : error && skills.length === 0 ? (
+            <ServicesLoading />
+          ) : error && services.length === 0 ? (
             <div className="px-5 py-10 text-center">
               <p className="text-sm text-error">{error}</p>
             </div>
-          ) : filteredSkills.length === 0 ? (
+          ) : filteredServices.length === 0 ? (
             <div className="flex flex-col items-center justify-center px-5 py-14 text-center">
               <p className="text-sm font-medium text-base-content/50">
-                No skills found
+                No services found
               </p>
 
               <p className="mt-1 text-xs text-base-content/30">
                 {search
-                  ? "No skills match your search."
-                  : "Create your first skill to get started."}
+                  ? "No services match your search."
+                  : "Create your first service to get started."}
               </p>
 
               {!search && (
@@ -346,23 +342,19 @@ const SkillsPage = () => {
                   className="mt-5 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-content transition-all duration-200 active:scale-[.95] sm:w-fit"
                 >
                   <FiPlus size={17} />
-                  Create Skill
+                  Create Service
                 </button>
               )}
             </div>
           ) : (
-            <ReorderList items={filteredSkills} onReorder={handleReorder}>
-              {(skill, { attributes, listeners }) => {
-                const Icon = getIcon(skill.icon);
-
+            <ReorderList items={filteredServices} onReorder={handleReorder}>
+              {(service, { attributes, listeners }) => {
+                const Icon = getIcon(service.icon);
                 return (
-                  <div
-                    key={skill._id}
-                    className="grid grid-cols-1 gap-4 px-4 py-4 transition-colors hover:bg-base-content/[0.02] sm:px-5 sm:py-5 md:grid-cols-12 md:items-center md:gap-0"
-                  >
-                    {/* Skill */}
-                    <div className="min-w-0 md:col-span-4">
-                      <div className="flex items-center justify-between gap-3">
+                  <div className="grid grid-cols-1 gap-5 px-4 py-4 transition-colors hover:bg-base-content/[0.02] sm:px-5 sm:py-5 md:grid-cols-12 md:items-center md:gap-0">
+                    {/* Service */}
+                    <div className="min-w-0 md:col-span-5">
+                      <div className="flex items-start justify-between gap-4">
                         <div className="flex items-center gap-3 justify-center">
                           {/* Drag Handle */}
                           <button
@@ -374,25 +366,22 @@ const SkillsPage = () => {
                           >
                             <FiMenu size={16} />
                           </button>
-                          <div className="flex min-w-0 items-center gap-3">
-                            <div
-                              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border"
-                              style={{
-                                color: skill.color,
-                                borderColor: `${skill.color}25`,
-                                backgroundColor: `${skill.color}30`,
-                              }}
-                            >
-                              {Icon && <Icon />}
+                          <div className="flex min-w-0 items-start gap-3">
+                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/10 text-primary">
+                              {Icon ? (
+                                <Icon size={19} />
+                              ) : (
+                                <span className="text-xs">API</span>
+                              )}
                             </div>
 
                             <div className="min-w-0">
                               <p className="truncate text-sm font-medium">
-                                {skill.name}
+                                {service.title}
                               </p>
 
                               <p className="mt-0.5 truncate text-[11px] text-base-content/35">
-                                Skill #{String(skill._id).slice(-6)}
+                                Service #{String(service._id).slice(-6)}
                               </p>
                             </div>
                           </div>
@@ -402,7 +391,7 @@ const SkillsPage = () => {
                         <div className="flex shrink-0 items-center gap-2 md:hidden">
                           <button
                             type="button"
-                            onClick={() => handleEdit(skill)}
+                            onClick={() => handleEdit(service)}
                             className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
                             title="Edit"
                           >
@@ -411,12 +400,12 @@ const SkillsPage = () => {
 
                           <button
                             type="button"
-                            onClick={() => handleDelete(skill._id)}
-                            disabled={deletingId === skill._id}
+                            onClick={() => handleDelete(service._id)}
+                            disabled={deletingId === service._id}
                             className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
                             title="Delete"
                           >
-                            {deletingId === skill._id ? (
+                            {deletingId === service._id ? (
                               <FiLoader size={15} className="animate-spin" />
                             ) : (
                               <FiTrash2 size={15} />
@@ -426,44 +415,12 @@ const SkillsPage = () => {
                       </div>
                     </div>
 
-                    {/* Category */}
-                    <div className="md:col-span-2">
-                      <div className="flex items-center justify-between gap-3 md:block">
-                        <span className="text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
-                          Category
-                        </span>
-
-                        <span className="inline-flex max-w-full rounded-full border border-base-content/10 bg-base-200 px-2.5 py-1 text-[11px] capitalize text-base-content/55">
-                          {formatUnderLineText(skill.category, " & ")}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Level */}
+                    {/* Description */}
                     <div className="md:col-span-3">
-                      <div className="flex items-center justify-between gap-4 md:block">
-                        <span className="text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
-                          Level
-                        </span>
-
-                        <div className="flex w-full max-w-52 items-center gap-3 md:w-auto">
-                          <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-base-content/10">
-                            <div
-                              className="h-full rounded-full transition-all duration-500"
-                              style={{
-                                width: `${skill.level}%`,
-                                backgroundColor: skill.color,
-                              }}
-                            />
-                          </div>
-
-                          <span
-                            className="w-9 shrink-0 text-right text-xs font-medium"
-                            style={{ color: skill.color }}
-                          >
-                            {skill.level}%
-                          </span>
-                        </div>
+                      <div className="flex items-start justify-between gap-4 md:block">
+                        <p className="line-clamp-2 max-w-md text-xs leading-5 text-base-content/45 md:max-w-none">
+                          {service.description}
+                        </p>
                       </div>
                     </div>
 
@@ -474,7 +431,7 @@ const SkillsPage = () => {
                           Status
                         </span>
 
-                        {skill.status ? (
+                        {service.status ? (
                           <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-[11px] font-medium text-success">
                             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-success" />
                             Active
@@ -488,10 +445,10 @@ const SkillsPage = () => {
                     </div>
 
                     {/* Actions - Desktop */}
-                    <div className="hidden items-center justify-end gap-2 md:col-span-1 md:flex">
+                    <div className="hidden items-center justify-end gap-2 md:col-span-2 md:flex">
                       <button
                         type="button"
-                        onClick={() => handleEdit(skill)}
+                        onClick={() => handleEdit(service)}
                         className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
                         title="Edit"
                       >
@@ -500,12 +457,12 @@ const SkillsPage = () => {
 
                       <button
                         type="button"
-                        onClick={() => handleDelete(skill._id)}
-                        disabled={deletingId === skill._id}
+                        onClick={() => handleDelete(service._id)}
+                        disabled={deletingId === service._id}
                         className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
                         title="Delete"
                       >
-                        {deletingId === skill._id ? (
+                        {deletingId === service._id ? (
                           <FiLoader size={15} className="animate-spin" />
                         ) : (
                           <FiTrash2 size={15} />
@@ -539,13 +496,13 @@ const SkillsPage = () => {
           <div className="flex items-center justify-between border-b border-base-content/10 px-5 py-4">
             <div>
               <h2 className="text-lg font-semibold">
-                {editingSkill ? "Update Skill" : "Create Skill"}
+                {editingService ? "Update Service" : "Create Service"}
               </h2>
 
               <p className="mt-0.5 text-xs text-base-content/40">
-                {editingSkill
-                  ? "Update the selected skill information."
-                  : "Add a new skill to your portfolio."}
+                {editingService
+                  ? "Update the selected service information."
+                  : "Add a new service to your portfolio."}
               </p>
             </div>
 
@@ -568,18 +525,18 @@ const SkillsPage = () => {
               </div>
             )}
 
-            {/* Skill Name */}
+            {/* Service Title */}
             <div>
               <label className="mb-2 block text-xs font-medium text-base-content/70">
-                Skill Name
+                Service Title
               </label>
 
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="title"
+                value={formData.title}
                 onChange={handleChange}
-                placeholder="e.g. React.js"
+                placeholder="e.g. Full Stack Web Development"
                 className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
               />
             </div>
@@ -595,95 +552,39 @@ const SkillsPage = () => {
                 name="icon"
                 value={formData.icon}
                 onChange={handleChange}
-                placeholder="e.g. FaReact"
+                placeholder="e.g. FaCode"
                 className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
               />
 
               <p className="mt-1.5 text-[11px] text-base-content/35">
-                Enter the React Icons component name, e.g. FaReact, SiNextdotjs,
-                FaLaravel.
+                Enter the React Icons component name, e.g. FaCode, FaLaravel,
+                FaWordpress.
               </p>
             </div>
 
-            {/* Category */}
+            {/* Description */}
             <div>
               <label className="mb-2 block text-xs font-medium text-base-content/70">
-                Category
+                Description
               </label>
 
-              <select
-                name="category"
-                value={formData.category}
+              <textarea
+                name="description"
+                value={formData.description}
                 onChange={handleChange}
-                className="select select-primary w-full cursor-pointer rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-primary/40"
-              >
-                <option value="" disabled>
-                  Select Category
-                </option>
-
-                <option value="frontend">Frontend</option>
-                <option value="backend">Backend</option>
-                <option value="database">Database</option>
-                <option value="tools_other">Tools & Other</option>
-              </select>
-            </div>
-
-            {/* Level */}
-            <div>
-              <div className="mb-2 flex items-center justify-between">
-                <label className="text-xs font-medium text-base-content/70">
-                  Skill Level
-                </label>
-
-                <span className="text-xs text-primary">{formData.level}%</span>
-              </div>
-
-              <input
-                type="range"
-                min="0"
-                max="100"
-                name="level"
-                value={formData.level}
-                onChange={handleChange}
-                className="range range-primary range-xs w-full"
+                rows={4}
+                placeholder="Write a short description of this service..."
+                className="w-full resize-none rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm leading-6 outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
               />
-            </div>
-
-            {/* Color */}
-            <div>
-              <label className="mb-2 block text-xs font-medium text-base-content/70">
-                Skill Color
-              </label>
-
-              <div className="flex items-center gap-3">
-                {/* Color Picker */}
-                <input
-                  type="color"
-                  name="color"
-                  value={formData.color || "#DBFF00"}
-                  onChange={handleChange}
-                  className="h-10 w-14 cursor-pointer rounded-lg border border-base-content/10 bg-base-200 p-1"
-                />
-
-                {/* Color Text */}
-                <input
-                  type="text"
-                  name="color"
-                  value={formData.color}
-                  onChange={handleChange}
-                  placeholder="#DBFF00"
-                  className="flex-1 rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-primary/40"
-                />
-              </div>
             </div>
 
             {/* Status */}
             <div className="flex items-center justify-between rounded-xl border border-base-content/10 bg-base-200 px-4 py-3">
               <div>
-                <p className="text-sm font-medium">Active Skill</p>
+                <p className="text-sm font-medium">Active Service</p>
 
                 <p className="mt-0.5 text-[11px] text-base-content/40">
-                  Show this skill on your portfolio.
+                  Show this service on your portfolio.
                 </p>
               </div>
 
@@ -710,15 +611,15 @@ const SkillsPage = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex min-w-32 cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-content transition-all active:scale[.95] disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex min-w-32 cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-content transition-all active:scale-[.95] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {submitting ? (
                   <>
                     <Spin />
-                    {editingSkill ? "Updating..." : "Creating..."}
+                    {editingService ? "Updating..." : "Creating..."}
                   </>
                 ) : (
-                  <>{editingSkill ? "Update Skill" : "Create Skill"}</>
+                  <>{editingService ? "Update Service" : "Create Service"}</>
                 )}
               </button>
             </div>
@@ -729,4 +630,4 @@ const SkillsPage = () => {
   );
 };
 
-export default SkillsPage;
+export default ServicesPage;
