@@ -6,7 +6,7 @@ const SkillsSkeleton = () => {
   return (
     <div>
       {/* Category Tabs */}
-      <div className="flex flex-wrap justify-center gap-3">
+      <div className="flex flex-wrap justify-center gap-3 mt-12">
         {[...Array(4)].map((_, index) => (
           <div
             key={index}
@@ -27,7 +27,7 @@ const SkillsSkeleton = () => {
         {skeletonCards.map((_, index) => (
           <div
             key={index}
-            className="overflow-hidden rounded-2xl border border-white/10 bg-white/3 p-5"
+            className="overflow-hidden rounded-2xl  bg-white/3 p-5"
           >
             {/* Icon */}
             <div className="h-14 w-14 animate-pulse rounded-2xl bg-white/5" />

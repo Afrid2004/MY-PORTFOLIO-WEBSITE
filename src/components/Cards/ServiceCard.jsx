@@ -3,10 +3,11 @@
 import React from "react";
 import { FiArrowRight } from "react-icons/fi";
 import Reveal from "../Reavel/Reavel";
+import { getIcon } from "@/lib/iconLoader";
 
 
 const ServiceCard = ({ service, idx }) => {
-  const Icon = service.icon;
+  const Icon = getIcon(service.icon);
 
   return (
     <Reveal

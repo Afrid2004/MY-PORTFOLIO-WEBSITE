@@ -1,55 +1,27 @@
 "use client";
 import ServiceCard from "@/components/Cards/ServiceCard";
-import React from "react";
-
-import {
-  FaCode,
-  FaLaptopCode,
-  FaServer,
-  FaLaravel,
-  FaWordpress,
-  FaMobileScreenButton,
-} from "react-icons/fa6";
-
+import ServiceSkeleton from "@/components/loadings/ServiceSkeleton";
+import React, { useEffect, useState } from "react";
 const Services = () => {
-  const services = [
-    {
-      title: "Full Stack Web Development",
-      description:
-        "Complete web applications with modern frontend, backend, APIs, authentication, and databases.",
-      icon: FaCode,
-    },
-    {
-      title: "Frontend Development",
-      description:
-        "Modern, responsive, and interactive interfaces using React, Next.js, Tailwind CSS, and Bootstrap.",
-      icon: FaLaptopCode,
-    },
-    {
-      title: "Backend & API Development",
-      description:
-        "Secure REST APIs, authentication, database integration, and reliable server-side functionality.",
-      icon: FaServer,
-    },
-    {
-      title: "Laravel Development",
-      description:
-        "Laravel-based web applications, CRUD systems, authentication, admin panels, and database-driven solutions.",
-      icon: FaLaravel,
-    },
-    {
-      title: "WordPress Development",
-      description:
-        "Custom WordPress websites, theme customization, business websites, and news portals.",
-      icon: FaWordpress,
-    },
-    {
-      title: "Responsive Web Design",
-      description:
-        "Clean and modern interfaces that provide a smooth experience across desktop, tablet, and mobile devices.",
-      icon: FaMobileScreenButton,
-    },
-  ];
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const fetchServices = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("/api/services");
+      const data = await res.json();
+      setServices(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
   return (
     <div className="py-20">
       <div className="container">
@@ -75,17 +47,21 @@ const Services = () => {
         </div>
 
         <div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {services.map((service, idx) => {
-              return (
-                <ServiceCard
-                  key={idx}
-                  idx={idx}
-                  service={service}
-                ></ServiceCard>
-              );
-            })}
-          </div>
+          {loading ? (
+            <ServiceSkeleton />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {services.map((service, idx) => {
+                return (
+                  <ServiceCard
+                    key={idx}
+                    idx={idx}
+                    service={service}
+                  ></ServiceCard>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>
