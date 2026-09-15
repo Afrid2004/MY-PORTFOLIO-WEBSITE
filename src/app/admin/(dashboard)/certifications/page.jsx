@@ -18,47 +18,47 @@ import Spin from "@/components/loadings/Spin";
 import ReorderList from "../components/reorder/ReorderList";
 import WorkExperienceLoading from "../components/loadings/workExperienceLoading";
 
-const WorkExperiencePage = () => {
+const CertificationsPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingWork, setEditingWork] = useState(null);
+  const [editingCertification, setEditingCertification] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const [workExperiences, setWorkExperiences] = useState([]);
+  const [certifications, setCertifications] = useState([]);
   const [search, setSearch] = useState("");
 
   const [formData, setFormData] = useState({
-    role: "",
-    company: "",
-    startDate: "",
-    endDate: "",
-    current: true,
-    address: "",
-    addressUrl: "",
-    responsibilities: [""],
+    title: "",
+    issuer: "",
+    duration: "",
+    credential: "",
+    image: "",
+    description: "",
+    highlights: [""],
     technologies: [""],
     status: true,
   });
 
-  // Get all work experiences
-  const fetchWorkExperiences = async () => {
+  // Get all certifications
+  const fetchCertifications = async () => {
     try {
       setLoading(true);
 
-      const res = await fetch("/api/work-experiences", {
+      const res = await fetch("/api/certifications", {
         cache: "no-store",
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed to fetch work experiences!");
+        throw new Error(data.message || "Failed to fetch certifications!");
       }
 
-      setWorkExperiences(data);
+      setCertifications(data);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -66,9 +66,9 @@ const WorkExperiencePage = () => {
     }
   };
 
-  // Reorder work experiences
-  const handleReorder = async (reorderedWorkExperiences) => {
-    setWorkExperiences(reorderedWorkExperiences);
+  // Reorder certifications
+  const handleReorder = async (reorderedCertifications) => {
+    setCertifications(reorderedCertifications);
 
     try {
       const res = await fetch("/api/reorder", {
@@ -77,8 +77,8 @@ const WorkExperiencePage = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          type: "workExperiences",
-          ids: reorderedWorkExperiences.map((item) => item._id),
+          type: "certifications",
+          ids: reorderedCertifications.map((item) => item._id),
         }),
       });
 
@@ -86,41 +86,30 @@ const WorkExperiencePage = () => {
 
       if (!res.ok) {
         throw new Error(
-          data.message || "Failed to update work experience order!",
+          data.message || "Failed to update certification order!",
         );
       }
     } catch (error) {
       setError(error.message);
 
-      await fetchWorkExperiences();
+      await fetchCertifications();
     }
   };
 
   useEffect(() => {
-    fetchWorkExperiences();
+    fetchCertifications();
   }, []);
 
-  // Search data
-  const filteredWorkExperiences = workExperiences.filter((item) => {
+  // Search certifications
+  const filteredCertifications = certifications.filter((item) => {
     const searchValue = search.toLowerCase();
 
     return (
-      item.role?.toLowerCase().includes(searchValue) ||
-      item.company?.toLowerCase().includes(searchValue)
+      item.title?.toLowerCase().includes(searchValue) ||
+      item.issuer?.toLowerCase().includes(searchValue) ||
+      item.credential?.toLowerCase().includes(searchValue)
     );
   });
-
-  // Format date
-  const formatDate = (date) => {
-    if (!date) {
-      return "";
-    }
-
-    return new Date(date).toLocaleDateString("en-US", {
-      month: "short",
-      year: "numeric",
-    });
-  };
 
   // Handle normal inputs
   const handleChange = (event) => {
@@ -132,18 +121,93 @@ const WorkExperiencePage = () => {
     }));
   };
 
-  // Handle current checkbox
-  const handleCurrentChange = (event) => {
-    const checked = event.target.checked;
+  // Handle certificate image upload
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
 
+    if (!file) {
+      return;
+    }
+
+    try {
+      setError("");
+      setUploadingImage(true);
+
+      // Check image size
+      if (file.size > 5 * 1024 * 1024) {
+        throw new Error("Image size must be less than 5 MB!");
+      }
+
+      // Check image type
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+      ];
+
+      if (!allowedTypes.includes(file.type)) {
+        throw new Error("Only JPG, PNG and WebP images are allowed!");
+      }
+
+      // Get temporary upload URL from our API
+      const urlResponse = await fetch("/api/upload/image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fileName: file.name,
+          fileType: file.type,
+        }),
+      });
+
+      const urlData = await urlResponse.json();
+
+      if (!urlResponse.ok) {
+        throw new Error(urlData.message || "Failed to prepare image upload!");
+      }
+
+      // Upload image directly to Cloudflare R2
+      const uploadResponse = await fetch(urlData.uploadUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type,
+        },
+        body: file,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error("Failed to upload image to Cloudflare R2!");
+      }
+
+      // Create public image URL
+      const imageUrl = `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${urlData.key}`;
+
+      // Save image URL in formData
+      setFormData((prev) => ({
+        ...prev,
+        image: imageUrl,
+      }));
+    } catch (error) {
+      setError(error.message || "Failed to upload image!");
+    } finally {
+      setUploadingImage(false);
+
+      // Allow selecting the same file again
+      event.target.value = "";
+    }
+  };
+
+  // Handle certificate image remove
+  const handleRemoveImage = () => {
     setFormData((prev) => ({
       ...prev,
-      current: checked,
-      endDate: checked ? "" : prev.endDate,
+      image: "",
     }));
   };
 
-  // Add item
+  // Add array item
   const addArrayItem = (name) => {
     setFormData((prev) => ({
       ...prev,
@@ -151,7 +215,7 @@ const WorkExperiencePage = () => {
     }));
   };
 
-  // Responsibilities + Technologies
+  // Handle array change
   const handleArrayChange = (name, index, value) => {
     setFormData((prev) => {
       const items = [...prev[name]];
@@ -165,7 +229,7 @@ const WorkExperiencePage = () => {
     });
   };
 
-  // Remove item
+  // Remove array item
   const removeArrayItem = (name, index) => {
     setFormData((prev) => {
       if (prev[name].length === 1) {
@@ -179,20 +243,19 @@ const WorkExperiencePage = () => {
     });
   };
 
-  // Create work experience
+  // Create certification
   const handleCreate = () => {
     setError("");
-    setEditingWork(null);
+    setEditingCertification(null);
 
     setFormData({
-      role: "",
-      company: "",
-      startDate: "",
-      endDate: "",
-      current: true,
-      address: "",
-      addressUrl: "",
-      responsibilities: [""],
+      title: "",
+      issuer: "",
+      duration: "",
+      credential: "",
+      image: "",
+      description: "",
+      highlights: [""],
       technologies: [""],
       status: true,
     });
@@ -200,28 +263,25 @@ const WorkExperiencePage = () => {
     setModalOpen(true);
   };
 
-  // Edit work experience
-  const handleEdit = (work) => {
+  // Edit certification
+  const handleEdit = (certification) => {
     setError("");
-    setEditingWork(work);
+    setEditingCertification(certification);
 
     setFormData({
-      role: work.role || "",
-      company: work.company || "",
-      startDate: work.startDate
-        ? new Date(work.startDate).toISOString().split("T")[0]
-        : "",
-      endDate:
-        work.endDate && !work.current
-          ? new Date(work.endDate).toISOString().split("T")[0]
-          : "",
-      current: work.current ?? false,
-      address: work.address || "",
-      addressUrl: work.addressUrl || "",
-      responsibilities:
-        work.responsibilities?.length > 0 ? work.responsibilities : [""],
-      technologies: work.technologies?.length > 0 ? work.technologies : [""],
-      status: work.status ?? true,
+      title: certification.title || "",
+      issuer: certification.issuer || "",
+      duration: certification.duration || "",
+      credential: certification.credential || "",
+      image: certification.image || "",
+      description: certification.description || "",
+      highlights:
+        certification.highlights?.length > 0 ? certification.highlights : [""],
+      technologies:
+        certification.technologies?.length > 0
+          ? certification.technologies
+          : [""],
+      status: certification.status ?? true,
     });
 
     setModalOpen(true);
@@ -229,7 +289,7 @@ const WorkExperiencePage = () => {
 
   // Close modal
   const handleCloseModal = () => {
-    if (submitting) {
+    if (submitting || uploadingImage) {
       return;
     }
 
@@ -248,16 +308,14 @@ const WorkExperiencePage = () => {
       const cleanedFormData = {
         ...formData,
 
-        role: formData.role.trim(),
-        company: formData.company.trim(),
-        address: formData.address.trim(),
-        addressUrl: formData.addressUrl.trim(),
+        title: formData.title.trim(),
+        issuer: formData.issuer.trim(),
+        duration: formData.duration.trim(),
+        credential: formData.credential.trim(),
+        image: formData.image.trim(),
+        description: formData.description.trim(),
 
-        startDate: formData.startDate,
-
-        endDate: formData.current ? null : formData.endDate || null,
-
-        responsibilities: formData.responsibilities
+        highlights: formData.highlights
           .map((item) => item.trim())
           .filter(Boolean),
 
@@ -266,11 +324,11 @@ const WorkExperiencePage = () => {
           .filter(Boolean),
       };
 
-      let url = "/api/work-experiences";
+      let url = "/api/certifications";
       let method = "POST";
 
-      if (editingWork) {
-        url = `/api/work-experiences/${editingWork._id}`;
+      if (editingCertification) {
+        url = `/api/certifications/${editingCertification._id}`;
         method = "PATCH";
       }
 
@@ -289,34 +347,31 @@ const WorkExperiencePage = () => {
         return;
       }
 
-      const wasEditing = editingWork;
+      const wasEditing = editingCertification;
 
       setModalOpen(false);
-      setEditingWork(null);
+      setEditingCertification(null);
 
       setFormData({
-        role: "",
-        company: "",
-        startDate: "",
-        endDate: "",
-        current: true,
-        address: "",
-        addressUrl: "",
-        responsibilities: [""],
+        title: "",
+        issuer: "",
+        duration: "",
+        credential: "",
+        image: "",
+        description: "",
+        highlights: [""],
         technologies: [""],
         status: true,
       });
 
-      await fetchWorkExperiences();
+      await fetchCertifications();
 
       await Swal.fire({
         icon: "success",
-        title: wasEditing
-          ? "Work Experience Updated!"
-          : "Work Experience Created!",
+        title: wasEditing ? "Certification Updated!" : "Certification Created!",
         text: wasEditing
-          ? "Work experience has been updated successfully."
-          : "Work experience has been created successfully.",
+          ? "Certification has been updated successfully."
+          : "Certification has been created successfully.",
         timer: 1500,
         showConfirmButton: false,
       });
@@ -327,10 +382,10 @@ const WorkExperiencePage = () => {
     }
   };
 
-  // Delete work experience
+  // Delete certification
   const handleDelete = async (id) => {
     const result = await Swal.fire({
-      title: "Delete Work Experience?",
+      title: "Delete Certification?",
       text: "You won't be able to undo this!",
       icon: "warning",
       showCancelButton: true,
@@ -348,7 +403,7 @@ const WorkExperiencePage = () => {
     try {
       setDeletingId(id);
 
-      const res = await fetch(`/api/work-experiences/${id}`, {
+      const res = await fetch(`/api/certifications/${id}`, {
         method: "DELETE",
       });
 
@@ -358,18 +413,18 @@ const WorkExperiencePage = () => {
         await Swal.fire({
           icon: "error",
           title: "Delete Failed!",
-          text: data.message || "Failed to delete work experience.",
+          text: data.message || "Failed to delete certification.",
         });
 
         return;
       }
 
-      setWorkExperiences((prev) => prev.filter((item) => item._id !== id));
+      setCertifications((prev) => prev.filter((item) => item._id !== id));
 
       await Swal.fire({
         icon: "success",
         title: "Deleted!",
-        text: "Work experience has been deleted successfully.",
+        text: "Certification has been deleted successfully.",
         timer: 1500,
         showConfirmButton: false,
       });
@@ -389,10 +444,10 @@ const WorkExperiencePage = () => {
       {/* Page Header */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Work Experience</h1>
+          <h1 className="text-2xl font-semibold">Certifications</h1>
 
           <p className="mt-1 text-sm text-base-content/45">
-            Manage the work experience displayed on your portfolio.
+            Manage the certifications displayed on your portfolio.
           </p>
         </div>
 
@@ -402,7 +457,7 @@ const WorkExperiencePage = () => {
           className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-content transition-all duration-200 active:scale-[.95] sm:w-fit"
         >
           <FiPlus size={17} />
-          Create Experience
+          Create Certification
         </button>
       </div>
 
@@ -413,7 +468,7 @@ const WorkExperiencePage = () => {
 
           <input
             type="text"
-            placeholder="Search experience..."
+            placeholder="Search certification..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full bg-transparent text-sm outline-none placeholder:text-base-content/30"
@@ -421,7 +476,7 @@ const WorkExperiencePage = () => {
         </div>
 
         <div className="text-xs text-base-content/40">
-          {filteredWorkExperiences.length} Experiences
+          {filteredCertifications.length} Certifications
         </div>
       </div>
 
@@ -429,33 +484,33 @@ const WorkExperiencePage = () => {
       <div className="overflow-hidden rounded-2xl border border-base-content/10 bg-base-100">
         {/* Table Header */}
         <div className="hidden grid-cols-12 border-b border-base-content/10 bg-base-200 px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-base-content/35 md:grid">
-          <div className="col-span-5">Experience</div>
+          <div className="col-span-5">Certification</div>
 
-          <div className="col-span-3">Date</div>
+          <div className="col-span-3">Issuer</div>
 
           <div className="col-span-2">Status</div>
 
           <div className="col-span-2 text-right">Action</div>
         </div>
 
-        {/* Experience List */}
+        {/* Certification List */}
         <div className="divide-y divide-base-content/10">
           {loading ? (
             <WorkExperienceLoading />
-          ) : error && workExperiences.length === 0 ? (
+          ) : error && certifications.length === 0 ? (
             <div className="px-5 py-10 text-center">
               <p className="text-sm text-error">{error}</p>
             </div>
-          ) : filteredWorkExperiences.length === 0 ? (
+          ) : filteredCertifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center px-5 py-14 text-center">
               <p className="text-sm font-medium text-base-content/50">
-                No work experience found
+                No certification found
               </p>
 
               <p className="mt-1 text-xs text-base-content/30">
                 {search
-                  ? "No work experience matches your search."
-                  : "Create your first work experience to get started."}
+                  ? "No certification matches your search."
+                  : "Create your first certification to get started."}
               </p>
 
               {!search && (
@@ -465,18 +520,18 @@ const WorkExperiencePage = () => {
                   className="mt-5 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-content transition-all duration-200 active:scale-[.95] sm:w-fit"
                 >
                   <FiPlus size={17} />
-                  Create Experience
+                  Create Certification
                 </button>
               )}
             </div>
           ) : (
             <ReorderList
-              items={filteredWorkExperiences}
+              items={filteredCertifications}
               onReorder={handleReorder}
             >
-              {(work, { attributes, listeners }) => (
+              {(certification, { attributes, listeners }) => (
                 <div className="grid min-w-0 grid-cols-1 gap-5 overflow-hidden px-4 py-4 transition-colors hover:bg-base-content/[0.02] sm:px-5 sm:py-5 md:grid-cols-12 md:items-center md:gap-0">
-                  {/* Experience */}
+                  {/* Certification */}
                   <div className="min-w-0 md:col-span-5">
                     <div className="flex min-w-0 items-start justify-between gap-4">
                       <div className="flex min-w-0 items-center gap-3">
@@ -493,15 +548,15 @@ const WorkExperiencePage = () => {
 
                         <div className="min-w-0">
                           <p className="break-words text-sm font-medium">
-                            {work.role}
+                            {certification.title}
                           </p>
 
                           <p className="mt-1 break-words text-xs text-primary">
-                            {work.company}
+                            {certification.issuer}
                           </p>
 
                           <p className="mt-0.5 break-words text-[11px] text-base-content/35">
-                            Experience #{String(work._id).slice(-6)}
+                            Certification #{String(certification._id).slice(-6)}
                           </p>
                         </div>
                       </div>
@@ -510,7 +565,7 @@ const WorkExperiencePage = () => {
                       <div className="flex shrink-0 items-center gap-2 md:hidden">
                         <button
                           type="button"
-                          onClick={() => handleEdit(work)}
+                          onClick={() => handleEdit(certification)}
                           className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
                           title="Edit"
                         >
@@ -519,12 +574,12 @@ const WorkExperiencePage = () => {
 
                         <button
                           type="button"
-                          onClick={() => handleDelete(work._id)}
-                          disabled={deletingId === work._id}
+                          onClick={() => handleDelete(certification._id)}
+                          disabled={deletingId === certification._id}
                           className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
                           title="Delete"
                         >
-                          {deletingId === work._id ? (
+                          {deletingId === certification._id ? (
                             <FiLoader size={15} className="animate-spin" />
                           ) : (
                             <FiTrash2 size={15} />
@@ -534,26 +589,21 @@ const WorkExperiencePage = () => {
                     </div>
                   </div>
 
-                  {/* Date */}
+                  {/* Issuer */}
                   <div className="min-w-0 md:col-span-3">
                     <div className="flex min-w-0 items-center justify-between gap-3 md:block">
                       <span className="shrink-0 text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
-                        Date
+                        Issuer
                       </span>
 
                       <div className="min-w-0 flex-1 text-right md:text-left">
                         <p className="break-words text-xs text-base-content/65">
-                          {formatDate(work.startDate)}
-                          {" → "}
-                          {work.current ? "Present" : formatDate(work.endDate)}
+                          {certification.issuer}
                         </p>
 
-                        {work.current && (
-                          <span className="mt-1 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
-                            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                            Current
-                          </span>
-                        )}
+                        <p className="mt-1 text-[11px] text-base-content/35">
+                          {certification.duration}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -566,7 +616,7 @@ const WorkExperiencePage = () => {
                       </span>
 
                       <div className="shrink-0">
-                        {work.status ? (
+                        {certification.status ? (
                           <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-[11px] font-medium text-success">
                             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-success" />
                             Active
@@ -584,7 +634,7 @@ const WorkExperiencePage = () => {
                   <div className="hidden items-center justify-end gap-2 md:col-span-2 md:flex">
                     <button
                       type="button"
-                      onClick={() => handleEdit(work)}
+                      onClick={() => handleEdit(certification)}
                       className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
                       title="Edit"
                     >
@@ -593,12 +643,12 @@ const WorkExperiencePage = () => {
 
                     <button
                       type="button"
-                      onClick={() => handleDelete(work._id)}
-                      disabled={deletingId === work._id}
+                      onClick={() => handleDelete(certification._id)}
+                      disabled={deletingId === certification._id}
                       className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
                       title="Delete"
                     >
-                      {deletingId === work._id ? (
+                      {deletingId === certification._id ? (
                         <FiLoader size={15} className="animate-spin" />
                       ) : (
                         <FiTrash2 size={15} />
@@ -631,22 +681,22 @@ const WorkExperiencePage = () => {
           <div className="flex shrink-0 items-center justify-between border-b border-base-content/10 bg-base-100 px-5 py-4">
             <div>
               <h2 className="text-lg font-semibold">
-                {editingWork
-                  ? "Update Work Experience"
-                  : "Create Work Experience"}
+                {editingCertification
+                  ? "Update Certification"
+                  : "Create Certification"}
               </h2>
 
               <p className="mt-0.5 text-xs text-base-content/40">
-                {editingWork
-                  ? "Update the selected work experience information."
-                  : "Add a new work experience to your portfolio."}
+                {editingCertification
+                  ? "Update the selected certification information."
+                  : "Add a new certification to your portfolio."}
               </p>
             </div>
 
             <button
               type="button"
               onClick={handleCloseModal}
-              disabled={submitting}
+              disabled={submitting || uploadingImage}
               className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-base-content/40 transition-colors hover:bg-base-content/5 hover:text-base-content disabled:cursor-not-allowed disabled:opacity-50"
             >
               <FiX size={18} />
@@ -663,133 +713,155 @@ const WorkExperiencePage = () => {
                 </div>
               )}
 
-              {/* Role */}
+              {/* Title */}
               <div>
                 <label className="mb-2 block text-xs font-medium text-base-content/70">
-                  Job Role
+                  Certification Title
                 </label>
 
                 <input
                   type="text"
-                  name="role"
-                  value={formData.role}
+                  name="title"
+                  value={formData.title}
                   onChange={handleChange}
-                  placeholder="e.g. Junior Full Stack Web Developer"
+                  placeholder="e.g. Professional Web Application Development using Laravel & React"
                   className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
                 />
               </div>
 
-              {/* Company */}
+              {/* Issuer */}
               <div>
                 <label className="mb-2 block text-xs font-medium text-base-content/70">
-                  Company
+                  Issuer
                 </label>
 
                 <input
                   type="text"
-                  name="company"
-                  value={formData.company}
+                  name="issuer"
+                  value={formData.issuer}
                   onChange={handleChange}
-                  placeholder="e.g. Centre for Computer Studies Ltd."
+                  placeholder="e.g. ISDB-BISEW IT Scholarship Project"
                   className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
                 />
               </div>
 
-              {/* Dates */}
+              {/* Duration + Credential */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {/* Start Date */}
+                {/* Duration */}
                 <div>
                   <label className="mb-2 block text-xs font-medium text-base-content/70">
-                    Start Date
+                    Duration
                   </label>
 
                   <input
-                    type="date"
-                    name="startDate"
-                    value={formData.startDate}
+                    type="text"
+                    name="duration"
+                    value={formData.duration}
                     onChange={handleChange}
-                    className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-primary/40"
+                    placeholder="e.g. 2026"
+                    className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
                   />
                 </div>
 
-                {/* End Date */}
+                {/* Credential */}
                 <div>
                   <label className="mb-2 block text-xs font-medium text-base-content/70">
-                    End Date
+                    Credential
                   </label>
 
                   <input
-                    type="date"
-                    name="endDate"
-                    value={formData.endDate}
+                    type="text"
+                    name="credential"
+                    value={formData.credential}
                     onChange={handleChange}
-                    disabled={formData.current}
-                    className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40 disabled:cursor-not-allowed disabled:opacity-40"
+                    placeholder="e.g. Certificate"
+                    className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
                   />
                 </div>
               </div>
 
-              {/* Current */}
-              <div className="flex items-center justify-between rounded-xl border border-base-content/10 bg-base-200 px-4 py-3">
-                <div>
-                  <p className="text-sm font-medium">Currently Working</p>
-
-                  <p className="mt-0.5 text-[11px] text-base-content/40">
-                    If enabled, you do not need to enter an end date.
-                  </p>
-                </div>
-
-                <input
-                  type="checkbox"
-                  name="current"
-                  checked={formData.current}
-                  onChange={handleCurrentChange}
-                  className="toggle toggle-primary"
-                />
-              </div>
-
-              {/* Address */}
+              {/* Certificate Image */}
               <div>
                 <label className="mb-2 block text-xs font-medium text-base-content/70">
-                  Address
+                  Certificate Image
                 </label>
 
                 <input
-                  type="text"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  placeholder="e.g. 72, Nizam Shankar Plaza, Dhaka"
-                  className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  onChange={handleImageUpload}
+                  disabled={uploadingImage || submitting}
+                  className="file-input w-full rounded-lg border border-base-content/10 bg-base-200 text-sm disabled:cursor-not-allowed disabled:opacity-50"
                 />
+
+                <p className="mt-1.5 text-[11px] text-base-content/35">
+                  JPG, PNG or WebP. Maximum 5 MB.
+                </p>
+
+                {/* Uploading */}
+                {uploadingImage && (
+                  <div className="mt-3 flex items-center gap-2 text-xs text-primary">
+                    <FiLoader size={14} className="animate-spin" />
+                    Uploading image...
+                  </div>
+                )}
+
+                {/* Image Preview */}
+                {formData.image && !uploadingImage && (
+                  <div className="mt-4 overflow-hidden rounded-xl border border-base-content/10 bg-base-200">
+                    <div className="flex items-center justify-between border-b border-base-content/10 px-4 py-3">
+                      <p className="text-xs font-medium text-base-content/60">
+                        Current Image
+                      </p>
+
+                      <button
+                        type="button"
+                        onClick={handleRemoveImage}
+                        disabled={submitting}
+                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-error/20 bg-error/10 px-3 py-1.5 text-xs font-medium text-error transition-colors hover:bg-error/15 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        <FiTrash2 size={13} />
+                        Remove Image
+                      </button>
+                    </div>
+
+                    <div className="p-4">
+                      <img
+                        src={formData.image}
+                        alt="Certificate preview"
+                        className="h-48 w-full rounded-lg object-contain"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Address URL */}
+              {/* Description */}
               <div>
                 <label className="mb-2 block text-xs font-medium text-base-content/70">
-                  Address URL
+                  Description
                 </label>
 
-                <input
-                  type="url"
-                  name="addressUrl"
-                  value={formData.addressUrl}
+                <textarea
+                  name="description"
+                  value={formData.description}
                   onChange={handleChange}
-                  placeholder="https://maps.google.com/..."
-                  className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
+                  rows={4}
+                  placeholder="Write a short description about this certification..."
+                  className="w-full resize-none rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
                 />
               </div>
 
-              {/* Responsibilities */}
+              {/* Highlights */}
               <div>
                 <div className="mb-2 flex items-center justify-between">
                   <label className="block text-xs font-medium text-base-content/70">
-                    Responsibilities
+                    Key Highlights
                   </label>
 
                   <button
                     type="button"
-                    onClick={() => addArrayItem("responsibilities")}
+                    onClick={() => addArrayItem("highlights")}
                     className="inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-primary"
                   >
                     <FiPlus size={14} />
@@ -798,28 +870,22 @@ const WorkExperiencePage = () => {
                 </div>
 
                 <div className="space-y-2">
-                  {formData.responsibilities.map((item, index) => (
+                  {formData.highlights.map((item, index) => (
                     <div key={index} className="flex items-center gap-2">
                       <input
                         type="text"
                         value={item}
                         onChange={(e) =>
-                          handleArrayChange(
-                            "responsibilities",
-                            index,
-                            e.target.value,
-                          )
+                          handleArrayChange("highlights", index, e.target.value)
                         }
-                        placeholder={`Responsibility ${index + 1}`}
+                        placeholder={`Highlight ${index + 1}`}
                         className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
                       />
 
-                      {formData.responsibilities.length > 1 && (
+                      {formData.highlights.length > 1 && (
                         <button
                           type="button"
-                          onClick={() =>
-                            removeArrayItem("responsibilities", index)
-                          }
+                          onClick={() => removeArrayItem("highlights", index)}
                           className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/10 text-error transition-all active:scale-[.95]"
                         >
                           <FiX size={15} />
@@ -881,10 +947,10 @@ const WorkExperiencePage = () => {
               {/* Status */}
               <div className="flex items-center justify-between rounded-xl border border-base-content/10 bg-base-200 px-4 py-3">
                 <div>
-                  <p className="text-sm font-medium">Active Experience</p>
+                  <p className="text-sm font-medium">Active Certification</p>
 
                   <p className="mt-0.5 text-[11px] text-base-content/40">
-                    Show this experience on your portfolio.
+                    Show this certification on your portfolio.
                   </p>
                 </div>
 
@@ -902,7 +968,7 @@ const WorkExperiencePage = () => {
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  disabled={submitting}
+                  disabled={submitting || uploadingImage}
                   className="cursor-pointer rounded-lg border border-base-content/10 px-4 py-2.5 text-sm text-base-content/55 transition-colors hover:bg-base-content/5 hover:text-base-content disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Cancel
@@ -910,19 +976,19 @@ const WorkExperiencePage = () => {
 
                 <button
                   type="submit"
-                  disabled={submitting}
+                  disabled={submitting || uploadingImage}
                   className="inline-flex min-w-36 cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-content transition-all active:scale-[.95] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {submitting ? (
                     <>
                       <Spin />
 
-                      {editingWork ? "Updating..." : "Creating..."}
+                      {editingCertification ? "Updating..." : "Creating..."}
                     </>
-                  ) : editingWork ? (
-                    "Update Experience"
+                  ) : editingCertification ? (
+                    "Update Certification"
                   ) : (
-                    "Create Experience"
+                    "Create Certification"
                   )}
                 </button>
               </div>
@@ -934,4 +1000,4 @@ const WorkExperiencePage = () => {
   );
 };
 
-export default WorkExperiencePage;
+export default CertificationsPage;

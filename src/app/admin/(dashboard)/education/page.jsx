@@ -482,38 +482,38 @@ const EducationPage = () => {
           ) : (
             <ReorderList items={filteredEducations} onReorder={handleReorder}>
               {(education, { attributes, listeners }) => (
-                <div className="grid grid-cols-1 gap-5 px-4 py-4 transition-colors hover:bg-base-content/[0.02] sm:px-5 sm:py-5 md:grid-cols-12 md:items-center md:gap-0">
+                <div className="grid min-w-0 grid-cols-1 gap-5 overflow-hidden px-4 py-4 transition-colors hover:bg-base-content/[0.02] sm:px-5 sm:py-5 md:grid-cols-12 md:items-center md:gap-0">
                   {/* Education */}
                   <div className="min-w-0 md:col-span-5">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex items-center justify-center gap-3">
+                    <div className="flex min-w-0 items-start justify-between gap-4">
+                      <div className="flex min-w-0 items-center gap-3">
                         {/* Drag Handle */}
                         <button
                           type="button"
                           {...attributes}
                           {...listeners}
-                          className="hidden h-8 w-8 cursor-grab items-center justify-center rounded-lg text-base-content/25 transition-colors hover:bg-base-content/5 hover:text-base-content/60 active:cursor-grabbing md:flex"
+                          className="hidden h-8 w-8 shrink-0 cursor-grab items-center justify-center rounded-lg text-base-content/25 transition-colors hover:bg-base-content/5 hover:text-base-content/60 active:cursor-grabbing md:flex"
                           title="Drag to reorder"
                         >
                           <FiMenu size={16} />
                         </button>
 
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-medium">
+                          <p className="break-words text-sm font-medium">
                             {education.degree}
                           </p>
 
-                          <p className="mt-1 truncate text-xs text-primary">
+                          <p className="mt-1 break-words text-xs text-primary">
                             {education.institution}
                           </p>
 
                           {education.result && (
-                            <p className="mt-1 truncate text-[11px] text-base-content/50">
+                            <p className="mt-1 break-words text-[11px] text-base-content/50">
                               {education.result}
                             </p>
                           )}
 
-                          <p className="mt-0.5 truncate text-[11px] text-base-content/35">
+                          <p className="mt-0.5 break-words text-[11px] text-base-content/35">
                             Education #{String(education._id).slice(-6)}
                           </p>
                         </div>
@@ -524,7 +524,7 @@ const EducationPage = () => {
                         <button
                           type="button"
                           onClick={() => handleEdit(education)}
-                          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
+                          className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
                           title="Edit"
                         >
                           <FiEdit2 size={15} />
@@ -534,7 +534,7 @@ const EducationPage = () => {
                           type="button"
                           onClick={() => handleDelete(education._id)}
                           disabled={deletingId === education._id}
-                          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
                           title="Delete"
                         >
                           {deletingId === education._id ? (
@@ -548,18 +548,16 @@ const EducationPage = () => {
                   </div>
 
                   {/* Date */}
-                  <div className="md:col-span-3">
-                    <div className="flex items-center justify-between gap-3 md:block">
-                      <span className="text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
+                  <div className="min-w-0 md:col-span-3">
+                    <div className="flex min-w-0 items-center justify-between gap-3 md:block">
+                      <span className="shrink-0 text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
                         Date
                       </span>
 
-                      <div className="text-right md:text-left">
-                        <p className="text-xs text-base-content/65">
+                      <div className="min-w-0 flex-1 text-right md:text-left">
+                        <p className="break-words text-xs text-base-content/65">
                           {formatDate(education.startDate)}
-
                           {" → "}
-
                           {education.current
                             ? "Present"
                             : formatDate(education.endDate)}
@@ -567,7 +565,7 @@ const EducationPage = () => {
 
                         {education.current && (
                           <span className="mt-1 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
-                            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                             Current
                           </span>
                         )}
@@ -576,22 +574,24 @@ const EducationPage = () => {
                   </div>
 
                   {/* Status */}
-                  <div className="md:col-span-2">
-                    <div className="flex items-center justify-between gap-3 md:block">
-                      <span className="text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
+                  <div className="min-w-0 md:col-span-2">
+                    <div className="flex min-w-0 items-center justify-between gap-3 md:block">
+                      <span className="shrink-0 text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
                         Status
                       </span>
 
-                      {education.status ? (
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-[11px] font-medium text-success">
-                          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-success" />
-                          Active
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-base-content/10 bg-base-content/5 px-2.5 py-1 text-[11px] font-medium text-base-content/40">
-                          Inactive
-                        </span>
-                      )}
+                      <div className="shrink-0">
+                        {education.status ? (
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-[11px] font-medium text-success">
+                            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-success" />
+                            Active
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-base-content/10 bg-base-content/5 px-2.5 py-1 text-[11px] font-medium text-base-content/40">
+                            Inactive
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -600,7 +600,7 @@ const EducationPage = () => {
                     <button
                       type="button"
                       onClick={() => handleEdit(education)}
-                      className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
+                      className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
                       title="Edit"
                     >
                       <FiEdit2 size={15} />
@@ -610,7 +610,7 @@ const EducationPage = () => {
                       type="button"
                       onClick={() => handleDelete(education._id)}
                       disabled={deletingId === education._id}
-                      className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
                       title="Delete"
                     >
                       {deletingId === education._id ? (

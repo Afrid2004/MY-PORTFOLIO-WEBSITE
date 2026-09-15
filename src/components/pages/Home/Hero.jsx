@@ -6,6 +6,7 @@ import { FiArrowRight, FiDownload } from "react-icons/fi";
 import MagneticButton from "@/components/Buttons/MagneticButton";
 
 import Reveal from "@/components/Reavel/Reavel";
+import Link from "next/link";
 
 const Hero = () => {
   return (
@@ -86,25 +87,32 @@ const Hero = () => {
                 >
                   <div className="flex items-center flex-wrap md:flex-nowrap gap-2">
                     <MagneticButton className="w-full sm:w-fit">
-                      <button className="inline-flex items-center gap-3 rounded-full border-2 border-primary bg-primary px-6 py-3 font-medium text-secondary transition-all duration-300 hover:bg-transparent hover:text-primary cursor-pointer w-full justify-center sm:w-fit">
+                      <Link
+                        href="#projects"
+                        className="group inline-flex w-full cursor-pointer items-center justify-center gap-3 rounded-full border-2 border-primary bg-primary px-6 py-3 font-medium text-secondary transition-all duration-300 hover:bg-transparent hover:text-primary sm:w-fit"
+                      >
                         <span>View Projects</span>
 
                         <FiArrowRight
                           size={18}
                           className="transition-transform duration-300 group-hover:translate-x-1"
                         />
-                      </button>
+                      </Link>
                     </MagneticButton>
 
                     <MagneticButton className="w-full sm:w-fit">
-                      <button className="inline-flex items-center gap-3 rounded-full border-2 border-white/15 bg-transparent px-6 py-3 font-medium text-base-content transition-all duration-300 hover:border-primary hover:text-primary cursor-pointer w-full justify-center sm:w-fit">
+                      <Link
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href="https://drive.google.com/file/d/1DcyKlqdhYsJgYY2yrdNko55fqumfooUD/view?usp=sharing"
+                        className="group inline-flex w-full cursor-pointer items-center justify-center gap-3 rounded-full border-2 border-white/15 bg-transparent px-6 py-3 font-medium text-base-content transition-all duration-300 hover:border-primary hover:text-primary sm:w-fit"
+                      >
                         <FiDownload
                           size={18}
                           className="transition-transform duration-300 group-hover:-translate-y-0.5"
                         />
-
                         <span>View Resume</span>
-                      </button>
+                      </Link>
                     </MagneticButton>
                   </div>
                 </Reveal>
@@ -139,15 +147,7 @@ const Hero = () => {
       </div>
 
       <div className="absolute bottom-0 right-10 pointer-events-none select-none -z-1">
-        <div
-          className="
-                        w-75 h-75
-                        md:w-100 md:h-100
-                        rounded-full
-                        blur-[100px] md:blur-[140px]
-                        bg-[radial-gradient(circle,#209181_0%,transparent_70%)]
-                    "
-        />
+        <div className="w-75 h-75 md:w-100 md:h-100 rounded-full blur-[100px] md:blur-[140px] bg-[radial-gradient(circle,#209181_0%,transparent_70%)]" />
       </div>
     </div>
   );

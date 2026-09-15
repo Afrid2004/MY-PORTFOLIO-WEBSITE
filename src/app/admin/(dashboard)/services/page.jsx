@@ -351,21 +351,22 @@ const ServicesPage = () => {
               {(service, { attributes, listeners }) => {
                 const Icon = getIcon(service.icon);
                 return (
-                  <div className="grid grid-cols-1 gap-5 px-4 py-4 transition-colors hover:bg-base-content/[0.02] sm:px-5 sm:py-5 md:grid-cols-12 md:items-center md:gap-0">
+                  <div className="grid min-w-0 grid-cols-1 gap-5 overflow-hidden px-4 py-4 transition-colors hover:bg-base-content/[0.02] sm:px-5 sm:py-5 md:grid-cols-12 md:items-center md:gap-0">
                     {/* Service */}
                     <div className="min-w-0 md:col-span-5">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex items-center gap-3 justify-center">
+                      <div className="flex min-w-0 items-start justify-between gap-4">
+                        <div className="flex min-w-0 items-center gap-3">
                           {/* Drag Handle */}
                           <button
                             type="button"
                             {...attributes}
                             {...listeners}
-                            className="hidden md:flex h-8 w-8 cursor-grab items-center justify-center rounded-lg text-base-content/25 transition-colors hover:bg-base-content/5 hover:text-base-content/60 active:cursor-grabbing"
+                            className="hidden h-8 w-8 shrink-0 cursor-grab items-center justify-center rounded-lg text-base-content/25 transition-colors hover:bg-base-content/5 hover:text-base-content/60 active:cursor-grabbing md:flex"
                             title="Drag to reorder"
                           >
                             <FiMenu size={16} />
                           </button>
+
                           <div className="flex min-w-0 items-start gap-3">
                             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/10 text-primary">
                               {Icon ? (
@@ -376,11 +377,11 @@ const ServicesPage = () => {
                             </div>
 
                             <div className="min-w-0">
-                              <p className="truncate text-sm font-medium">
+                              <p className="break-words text-sm font-medium">
                                 {service.title}
                               </p>
 
-                              <p className="mt-0.5 truncate text-[11px] text-base-content/35">
+                              <p className="mt-0.5 break-words text-[11px] text-base-content/35">
                                 Service #{String(service._id).slice(-6)}
                               </p>
                             </div>
@@ -392,7 +393,7 @@ const ServicesPage = () => {
                           <button
                             type="button"
                             onClick={() => handleEdit(service)}
-                            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
+                            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
                             title="Edit"
                           >
                             <FiEdit2 size={15} />
@@ -402,7 +403,7 @@ const ServicesPage = () => {
                             type="button"
                             onClick={() => handleDelete(service._id)}
                             disabled={deletingId === service._id}
-                            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
                             title="Delete"
                           >
                             {deletingId === service._id ? (
@@ -416,31 +417,33 @@ const ServicesPage = () => {
                     </div>
 
                     {/* Description */}
-                    <div className="md:col-span-3">
-                      <div className="flex items-start justify-between gap-4 md:block">
-                        <p className="line-clamp-2 max-w-md text-xs leading-5 text-base-content/45 md:max-w-none">
+                    <div className="min-w-0 md:col-span-3">
+                      <div className="flex min-w-0 items-start justify-between gap-4 md:block">
+                        <p className="break-words text-xs leading-5 text-base-content/45">
                           {service.description}
                         </p>
                       </div>
                     </div>
 
                     {/* Status */}
-                    <div className="md:col-span-2">
-                      <div className="flex items-center justify-between gap-3 md:block">
-                        <span className="text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
+                    <div className="min-w-0 md:col-span-2">
+                      <div className="flex min-w-0 items-center justify-between gap-3 md:block">
+                        <span className="shrink-0 text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
                           Status
                         </span>
 
-                        {service.status ? (
-                          <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-[11px] font-medium text-success">
-                            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-success" />
-                            Active
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1.5 rounded-full border border-base-content/10 bg-base-content/5 px-2.5 py-1 text-[11px] font-medium text-base-content/40">
-                            Inactive
-                          </span>
-                        )}
+                        <div className="shrink-0">
+                          {service.status ? (
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-[11px] font-medium text-success">
+                              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-success" />
+                              Active
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-base-content/10 bg-base-content/5 px-2.5 py-1 text-[11px] font-medium text-base-content/40">
+                              Inactive
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
 
@@ -449,7 +452,7 @@ const ServicesPage = () => {
                       <button
                         type="button"
                         onClick={() => handleEdit(service)}
-                        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
+                        className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
                         title="Edit"
                       >
                         <FiEdit2 size={15} />
@@ -459,7 +462,7 @@ const ServicesPage = () => {
                         type="button"
                         onClick={() => handleDelete(service._id)}
                         disabled={deletingId === service._id}
-                        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
                         title="Delete"
                       >
                         {deletingId === service._id ? (

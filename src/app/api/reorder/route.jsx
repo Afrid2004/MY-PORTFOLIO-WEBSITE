@@ -23,6 +23,9 @@ export async function POST(request) {
     const allowedCollections = {
       skills: collections.skills,
       services: collections.services,
+      educations: collections.educations,
+      workExperiences: collections.workExperiences,
+      certifications: collections.certifications,
     };
 
     if (!allowedCollections[type]) {

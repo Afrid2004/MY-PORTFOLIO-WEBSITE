@@ -3,9 +3,9 @@ import React from "react";
 const WorkExperienceLoading = () => {
   return (
     <div className="divide-y divide-base-content/10">
-      {[...Array(3)].map((item) => (
+      {[...Array(3)].map((_, idx) => (
         <div
-          key={item}
+          key={idx}
           className="grid grid-cols-1 gap-5 px-4 py-4 sm:px-5 sm:py-5 md:grid-cols-12 md:items-center md:gap-0"
         >
           {/* Experience */}

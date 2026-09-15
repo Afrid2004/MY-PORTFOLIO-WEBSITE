@@ -23,7 +23,7 @@ const Services = () => {
   }, []);
 
   return (
-    <div className="py-20">
+    <section id="services" className="py-20">
       <div className="container">
         <div className="max-w-3xl mx-auto text-center mb-10">
           <div className="gradient-border w-fit p-0.5 mx-auto">
@@ -64,7 +64,7 @@ const Services = () => {
           )}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
