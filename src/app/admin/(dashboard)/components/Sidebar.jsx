@@ -67,8 +67,8 @@ const menuItems = [
     ],
   },
   {
-    title: "Blog",
-    href: "/admin/blog",
+    title: "Blogs",
+    href: "/admin/blogs",
     icon: FiFileText,
   },
   {
