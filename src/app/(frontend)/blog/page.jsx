@@ -199,7 +199,7 @@ const Blog = () => {
           >
             <div className="mt-10 text-center">
               <Link
-                href="/blog"
+                href="/blogs"
                 className="group inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-5 py-2.5 text-sm font-medium transition-all duration-300 hover:border-primary/30 hover:bg-primary/5 hover:text-primary"
               >
                 View All Articles

@@ -334,7 +334,7 @@ const BlogDetails = async ({ params }) => {
                 </p>
 
                 <Link
-                  href="/blog"
+                  href="/blogs"
                   className="group mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary"
                 >
                   Browse articles
