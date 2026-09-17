@@ -257,7 +257,7 @@ const BlogDetails = async ({ params }) => {
 
               <div className="mt-12 flex items-center justify-between border-t border-white/10 pt-8">
                 <Link
-                  href="/blog"
+                  href="/blogs"
                   className="group inline-flex items-center gap-2 text-sm font-medium text-base-content/50 transition-colors duration-300 hover:text-primary"
                 >
                   <FiArrowLeft
@@ -268,7 +268,7 @@ const BlogDetails = async ({ params }) => {
                 </Link>
 
                 <Link
-                  href="/blog"
+                  href="/blogs"
                   className="group inline-flex items-center gap-2 text-sm font-medium text-base-content/50 transition-colors duration-300 hover:text-primary"
                 >
                   More Articles
