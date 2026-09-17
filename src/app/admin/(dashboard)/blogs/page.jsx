@@ -54,7 +54,7 @@ const BlogsPage = () => {
     image: "",
     tags: [""],
     readTime: "",
-    publishedAt: "",
+    publishedAt: new Date().toISOString().split("T")[0],
     keywords: [""],
     status: true,
   });
@@ -294,7 +294,7 @@ const BlogsPage = () => {
       image: "",
       tags: [""],
       readTime: "",
-      publishedAt: "",
+      publishedAt: new Date().toISOString().split("T")[0],
       keywords: [""],
       status: true,
     });

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -44,6 +44,16 @@ const TiptapEditor = ({ value, onChange }) => {
 
     immediatelyRender: false,
   });
+
+  useEffect(() => {
+    if (!editor) return;
+
+    const currentContent = editor.getHTML();
+
+    if (value !== currentContent) {
+      editor.commands.setContent(value || "", false);
+    }
+  }, [editor, value]);
 
   if (!editor) {
     return null;
