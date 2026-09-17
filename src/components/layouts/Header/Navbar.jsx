@@ -95,7 +95,7 @@ const Navbar = () => {
         viewport={0}
       >
         <li>
-          <NavLink href="#experience">Experience</NavLink>
+          <NavLink href="#blogs">Blogs</NavLink>
         </li>
       </Reveal>
 
@@ -106,7 +106,7 @@ const Navbar = () => {
         viewport={0}
       >
         <li>
-          <NavLink href="#projects">Projects</NavLink>
+          <NavLink href="#contact">Contact</NavLink>
         </li>
       </Reveal>
     </>

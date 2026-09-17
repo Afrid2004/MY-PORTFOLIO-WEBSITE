@@ -18,10 +18,16 @@ import {
 
 const getBlog = async (slug) => {
   try {
+    // 5 seconds delay
+    await new Promise((resolve) => {
+      setTimeout(resolve, 5000);
+    });
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
     const res = await fetch(`${baseUrl}/api/blog/${encodeURIComponent(slug)}`, {
-      cache: "no-store",
+      next: {
+        revalidate: 60
+      }
     });
 
     if (!res.ok) {

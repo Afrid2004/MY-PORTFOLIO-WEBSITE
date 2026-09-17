@@ -45,7 +45,7 @@ const Blog = () => {
   }, []);
 
   return (
-    <section className="relative overflow-x-clip py-20">
+    <section id="blogs" className="relative overflow-x-clip py-20">
       <div className="container relative z-10">
         {/* Section Header */}
 

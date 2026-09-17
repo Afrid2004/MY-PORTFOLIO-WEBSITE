@@ -6,12 +6,15 @@ import { validateBlog } from "@/lib/validations/blogValidation";
 
 // GET - Get all blogs
 
+// GET - Get all published blogs
 export async function GET() {
   try {
     const blogCollection = await dbConnect(collections.blogs);
 
     const result = await blogCollection
-      .find()
+      .find({
+        status: true,
+      })
       .sort({
         order: 1,
         createdAt: 1,

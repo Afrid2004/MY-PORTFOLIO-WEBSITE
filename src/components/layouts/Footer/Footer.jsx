@@ -21,7 +21,7 @@ const Footer = () => {
 
   return (
     <footer>
-      <div className="h-px w-full bg-linear-to-r from-transparent via-gray-400 to-transparent" />
+      <div id="contact" className="h-px w-full bg-linear-to-r from-transparent via-gray-400 to-transparent" />
 
       <div>
         <div className="bg-base-200/70 relative overflow-hidden">

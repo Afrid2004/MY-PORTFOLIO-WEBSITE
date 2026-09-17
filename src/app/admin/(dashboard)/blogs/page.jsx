@@ -18,6 +18,7 @@ import Spin from "@/components/loadings/Spin";
 import ReorderList from "../components/reorder/ReorderList";
 import WorkExperienceLoading from "../components/loadings/workExperienceLoading";
 import TiptapEditor from "../components/editor/TiptapEditor";
+import Link from "next/link";
 
 const categories = [
   "Laravel",
@@ -580,9 +581,9 @@ const BlogsPage = () => {
                         </button>
 
                         <div className="min-w-0">
-                          <p className="break-words text-sm font-medium mb-2 text-primary">
+                          <Link href={`/blog/${blog.slug}`} className="break-words text-sm font-medium mb-2 text-primary">
                             {blog.title}
-                          </p>
+                          </Link>
 
                           <p className="mb-2 line-clamp-1 break-words text-xs text-base-content/70">
                             {blog.excerpt}
