@@ -10,6 +10,7 @@ export const collections = {
   educations: "educations",
   certifications: "certifications",
   blogs: "blogs",
+  projects: "projects",
 };
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {

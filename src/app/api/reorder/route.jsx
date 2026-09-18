@@ -27,6 +27,7 @@ export async function POST(request) {
       workExperiences: collections.workExperiences,
       certifications: collections.certifications,
       blogs: collections.blogs,
+      projects: collections.projects,
     };
 
     if (!allowedCollections[type]) {

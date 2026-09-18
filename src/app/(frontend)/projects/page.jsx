@@ -3,74 +3,73 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  FiArrowUpRight,
-  FiCalendar,
-  FiClock,
-  FiSearch,
-  FiX,
-} from "react-icons/fi";
-
+import { FiArrowUpRight, FiGithub, FiSearch, FiX } from "react-icons/fi";
 import Reveal from "@/components/Reavel/Reavel";
-import BlogsSkeleton from "./BlogsSkeleton";
+import ProjectsSkeleton from "./ProjectsSkeleton";
 
-const BlogPage = () => {
-  const [blogs, setBlogs] = useState([]);
+const ProjectsPage = () => {
+  const [projects, setProjects] = useState([]);
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [loading, setLoading] = useState(true);
 
-  const fetchBlogs = async () => {
+  // Get projects
+  const fetchProjects = async () => {
     try {
-      const res = await fetch("/api/blogs", {
+      const res = await fetch("/api/projects", {
         cache: "no-store",
       });
 
       if (!res.ok) {
-        throw new Error("Failed to fetch blogs");
+        throw new Error("Failed to fetch projects");
       }
 
       const data = await res.json();
-      setBlogs(data);
+
+      setProjects(data);
     } catch (error) {
-      console.log("Failed to fetch blogs:", error);
-      setBlogs([]);
+      console.log("Failed to fetch projects:", error);
+      setProjects([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchBlogs();
+    fetchProjects();
   }, []);
 
-  // Get categories
+  // Get categories dynamically
   const categories = [
     "All",
-    ...new Set(blogs.map((blog) => blog.category).filter(Boolean)),
+    ...new Set(projects.map((project) => project.category).filter(Boolean)),
   ];
 
-  // Filter blogs
-  const filteredBlogs = blogs.filter((blog) => {
-    const searchValue = search.trim().toLowerCase();
+  // Category Filter
+  const categoryProjects = projects.filter((project) => {
+    if (activeCategory === "All") {
+      return true;
+    }
 
-    const matchesCategory =
-      activeCategory === "All" ||
-      blog.category?.toLowerCase() === activeCategory.toLowerCase();
+    return project.category === activeCategory;
+  });
 
-    const matchesSearch =
-      !searchValue ||
-      blog.title?.toLowerCase().includes(searchValue) ||
-      blog.excerpt?.toLowerCase().includes(searchValue) ||
-      blog.category?.toLowerCase().includes(searchValue) ||
-      blog.slug?.toLowerCase().includes(searchValue) ||
-      blog.tags?.some((tag) => tag.toLowerCase().includes(searchValue));
+  // Search Filter
+  const searchProjects = categoryProjects.filter((project) => {
+    const searchValue = search.toLowerCase();
 
-    return matchesCategory && matchesSearch;
+    return (
+      project.title?.toLowerCase().includes(searchValue) ||
+      project.description?.toLowerCase().includes(searchValue) ||
+      project.category?.toLowerCase().includes(searchValue) ||
+      project.technologies?.some((technology) =>
+        technology.name?.toLowerCase().includes(searchValue),
+      )
+    );
   });
 
   return (
-    <div className="relative overflow-x-clip py-12 md:py-16 lg:py-20">
+    <main className="relative overflow-x-clip py-12 md:py-16 lg:py-20">
       <div className="container relative z-10">
         {/* Header */}
         <Reveal
@@ -81,25 +80,25 @@ const BlogPage = () => {
         >
           <header className="mx-auto mb-12 mt-15 max-w-5xl text-center md:mb-16">
             <span className="inline-flex rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-primary">
-              My Blog
+              My Projects
             </span>
 
             <h1 className="mt-6 text-4xl font-semibold leading-tight tracking-tight text-base-content sm:text-5xl md:text-6xl">
-              Thoughts, Tutorials &{" "}
-              <span className="text-primary">Insights</span>
+              Things I&apos;ve <span className="text-primary">Built</span>
             </h1>
 
             <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-base-content/50 md:text-lg">
-              Practical articles about web development, Laravel, React, Next.js,
-              JavaScript, databases, and my journey as a developer.
+              A collection of web applications and projects I&apos;ve built
+              using modern technologies, from full-stack systems to frontend
+              experiences.
             </p>
           </header>
         </Reveal>
 
         {/* Loading */}
         {loading ? (
-          <BlogsSkeleton />
-        ) : blogs.length > 0 ? (
+          <ProjectsSkeleton />
+        ) : projects.length > 0 ? (
           <>
             {/* Search & Categories */}
             <Reveal
@@ -121,7 +120,7 @@ const BlogPage = () => {
                       type="text"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
-                      placeholder="Search articles..."
+                      placeholder="Search projects..."
                       className="h-12 w-full rounded-xl border border-white/10 bg-white/[0.03] pl-11 pr-11 text-sm text-base-content outline-none transition-all duration-300 placeholder:text-base-content/30 focus:border-primary/30 focus:bg-white/[0.05]"
                     />
 
@@ -144,7 +143,7 @@ const BlogPage = () => {
                       key={category}
                       type="button"
                       onClick={() => setActiveCategory(category)}
-                      className={`rounded-full border px-4 py-2 text-xs font-medium transition-all duration-300 ${
+                      className={`rounded-full cursor-pointer border px-4 py-2 text-xs font-medium transition-all duration-300 ${
                         activeCategory === category
                           ? "border-primary/30 bg-primary/10 text-primary"
                           : "border-white/10 bg-white/[0.02] text-base-content/45 hover:border-primary/20 hover:bg-primary/5 hover:text-primary"
@@ -160,30 +159,17 @@ const BlogPage = () => {
             {/* Result Count */}
             <div className="mb-6 flex items-center justify-between">
               <p className="text-sm text-base-content/40">
-                {filteredBlogs.length}{" "}
-                {filteredBlogs.length === 1 ? "article" : "articles"}
+                {searchProjects.length}{" "}
+                {searchProjects.length === 1 ? "project" : "projects"}
               </p>
-
-              {search || activeCategory !== "All" ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearch("");
-                    setActiveCategory("All");
-                  }}
-                  className="text-xs font-medium text-primary transition-colors hover:text-primary/70"
-                >
-                  Clear filters
-                </button>
-              ) : null}
             </div>
 
-            {/* Blog Grid / Filter Empty State */}
-            {filteredBlogs.length > 0 ? (
+            {/* Project Grid */}
+            {searchProjects.length > 0 ? (
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {filteredBlogs.map((blog) => (
+                {searchProjects.map((project) => (
                   <Reveal
-                    key={blog._id}
+                    key={project._id}
                     initial="opacity-0 translate-y-10"
                     view="opacity-100 translate-y-0"
                     transition="transition-all duration-500"
@@ -191,91 +177,94 @@ const BlogPage = () => {
                   >
                     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] transition-all duration-500 hover:-translate-y-1 hover:border-white/15 hover:bg-white/5">
                       {/* Image */}
-                      <Link href={`/blog/${blog.slug}`} className="block">
-                        <div className="relative aspect-[16/9] overflow-hidden bg-white/[0.03]">
-                          {blog.image ? (
-                            <Image
-                              src={blog.image}
-                              alt={blog.title}
-                              fill
-                              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                              className="object-cover transition-transform duration-700 group-hover:scale-105"
-                            />
-                          ) : (
-                            <div className="flex h-full items-center justify-center text-sm text-base-content/20">
-                              No image available
-                            </div>
-                          )}
+                      <div className="relative aspect-[16/9] overflow-hidden bg-white/[0.03]">
+                        {project.image ? (
+                          <Image
+                            src={project.image}
+                            alt={project.title}
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            className="object-cover transition-transform duration-700 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="flex h-full items-center justify-center text-sm text-base-content/20">
+                            No image available
+                          </div>
+                        )}
 
-                          {/* Image Overlay */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
+                        {/* Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
 
-                          {/* Category */}
+                        {/* Category */}
+                        {project.category && (
                           <div className="absolute left-4 top-4">
                             <span className="inline-flex rounded-full border border-primary/20 bg-base-100/80 px-3 py-1.5 text-xs font-medium text-primary backdrop-blur-md">
-                              {blog.category}
+                              {project.category}
                             </span>
                           </div>
-                        </div>
-                      </Link>
+                        )}
+                      </div>
 
                       {/* Content */}
                       <div className="flex flex-1 flex-col p-6">
-                        {/* Meta */}
-                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-base-content/40">
-                          <span className="flex items-center gap-1.5">
-                            <FiCalendar size={13} />
-
-                            {blog.publishedAt
-                              ? new Date(blog.publishedAt).toLocaleDateString(
-                                  "en-US",
-                                  {
-                                    month: "short",
-                                    day: "2-digit",
-                                    year: "numeric",
-                                  },
-                                )
-                              : "No date"}
-                          </span>
-
-                          <span className="flex items-center gap-1.5">
-                            <FiClock size={13} />
-
-                            {blog.readTime
-                              ? `${blog.readTime} min read`
-                              : "Quick read"}
-                          </span>
-                        </div>
-
                         {/* Title */}
-                        <Link href={`/blog/${blog.slug}`}>
-                          <h2 className="mt-4 line-clamp-2 text-xl font-semibold leading-8 transition-colors duration-300 hover:text-primary">
-                            {blog.title}
-                          </h2>
-                        </Link>
+                        <h2 className="line-clamp-2 text-xl font-semibold leading-8 transition-colors duration-300 group-hover:text-primary">
+                          {project.title}
+                        </h2>
 
-                        {/* Excerpt */}
-                        <p className="mt-3 line-clamp-2 text-sm leading-7 text-base-content/60">
-                          {blog.excerpt}
+                        {/* Description */}
+                        <p className="mt-3 line-clamp-3 text-sm leading-7 text-base-content/60">
+                          {project.description}
                         </p>
+
+                        {/* Technologies */}
+                        {project.technologies?.length > 0 && (
+                          <div className="mt-5 flex flex-wrap gap-2">
+                            {project.technologies.map((technology, index) => (
+                              <span
+                                key={index}
+                                className="rounded-full border border-white/10 bg-white/[0.02] px-2.5 py-1 text-[11px] text-base-content/45"
+                              >
+                                {technology.name}
+                              </span>
+                            ))}
+                          </div>
+                        )}
 
                         {/* Divider */}
                         <div className="relative mt-6 h-px w-full overflow-hidden bg-white/10">
                           <div className="absolute inset-y-0 left-0 w-0 bg-primary transition-all duration-500 group-hover:w-full" />
                         </div>
 
-                        {/* Read More */}
-                        <div className="mt-auto pt-5">
-                          <Link
-                            href={`/blog/${blog.slug}`}
-                            className="inline-flex items-center gap-2 text-sm font-medium text-base-content/70 transition-colors duration-300 hover:text-primary"
-                          >
-                            Read Article
-                            <FiArrowUpRight
-                              size={16}
-                              className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                            />
-                          </Link>
+                        {/* Actions */}
+                        <div className="mt-auto flex items-center gap-3 pt-5">
+                          {project.liveUrl && (
+                            <Link
+                              href={project.liveUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-content transition-all duration-300 hover:opacity-90 ${
+                                project.githubUrl ? "flex-1" : "w-full"
+                              }`}
+                            >
+                              Live Demo
+                              <FiArrowUpRight size={16} />
+                            </Link>
+                          )}
+
+                          {project.githubUrl && (
+                            <Link
+                              href={project.githubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm font-medium text-base-content/70 transition-all duration-300 hover:border-primary/20 hover:text-primary ${
+                                project.liveUrl ? "flex-1" : "w-full"
+                              }`}
+                            >
+                              <FiGithub size={16} />
+                              GitHub
+                            </Link>
+                          )}
                         </div>
                       </div>
                     </article>
@@ -283,14 +272,14 @@ const BlogPage = () => {
                 ))}
               </div>
             ) : (
-              /* No Result After Search / Filter */
+              /* No Filter Result */
               <div className="flex min-h-[300px] flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.02] px-6 text-center">
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                   <FiSearch size={22} />
                 </div>
 
                 <h2 className="mt-5 text-xl font-semibold text-base-content">
-                  No articles found
+                  No projects found
                 </h2>
 
                 <p className="mt-2 max-w-md text-sm leading-7 text-base-content/40">
@@ -305,25 +294,25 @@ const BlogPage = () => {
                   }}
                   className="mt-5 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-content transition-all duration-300 hover:opacity-90"
                 >
-                  View All Articles
+                  View All Projects
                   <FiArrowUpRight size={16} />
                 </button>
               </div>
             )}
           </>
         ) : (
-          /* No Blogs In Database */
+          /* No Projects In Database */
           <div className="flex min-h-[300px] flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.02] px-6 text-center">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
               <FiSearch size={22} />
             </div>
 
             <h2 className="mt-5 text-xl font-semibold text-base-content">
-              No articles found
+              No projects found
             </h2>
 
             <p className="mt-2 max-w-md text-sm leading-7 text-base-content/40">
-              There are no published articles available right now.
+              There are no active projects available right now.
             </p>
           </div>
         )}
@@ -337,8 +326,8 @@ const BlogPage = () => {
       <div className="pointer-events-none absolute -right-48 top-[45%] -z-10 select-none">
         <div className="h-125 w-125 rounded-full bg-[radial-gradient(circle,#209181_0%,transparent_70%)] blur-[140px]" />
       </div>
-    </div>
+    </main>
   );
 };
 
-export default BlogPage;
+export default ProjectsPage;

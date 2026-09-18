@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-
 import {
   FiPlus,
   FiEdit2,
@@ -11,54 +10,74 @@ import {
   FiLoader,
   FiMenu,
 } from "react-icons/fi";
-
 import Swal from "sweetalert2";
-
 import Spin from "@/components/loadings/Spin";
 import ReorderList from "../components/reorder/ReorderList";
 import WorkExperienceLoading from "../components/loadings/workExperienceLoading";
+import Image from "next/image";
 
-const CertificationsPage = () => {
+const ProjectsPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingCertification, setEditingCertification] = useState(null);
+  const [editingProject, setEditingProject] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
-
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-
-  const [certifications, setCertifications] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [search, setSearch] = useState("");
+
+  const getTodayDate = () => {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "No date";
+
+    return new Date(date).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  const emptyTechnology = {
+    name: "",
+    icon: "",
+    color: "",
+  };
 
   const [formData, setFormData] = useState({
     title: "",
-    issuer: "",
-    duration: "",
-    credential: "",
-    image: "",
+    category: "Full Stack",
     description: "",
-    highlights: [""],
-    technologies: [""],
+    image: "",
+    technologies: [{ ...emptyTechnology }],
+    liveUrl: "",
+    githubUrl: "",
+    projectStatus: "Completed",
+    publishedDate: getTodayDate(),
+    featured: false,
     status: true,
   });
 
-  // Get all certifications
-  const fetchCertifications = async () => {
+  // Get all projects
+  const fetchProjects = async () => {
     try {
       setLoading(true);
 
-      const res = await fetch("/api/certifications", {
+      const res = await fetch("/api/projects", {
         cache: "no-store",
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed to fetch certifications!");
+        throw new Error(data.message || "Failed to fetch projects!");
       }
 
-      setCertifications(data);
+      setProjects(data);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -66,11 +85,9 @@ const CertificationsPage = () => {
     }
   };
 
-
-
-  // Reorder certifications
-  const handleReorder = async (reorderedCertifications) => {
-    setCertifications(reorderedCertifications);
+  // Reorder projects
+  const handleReorder = async (reorderedProjects) => {
+    setProjects(reorderedProjects);
 
     try {
       const res = await fetch("/api/reorder", {
@@ -79,37 +96,39 @@ const CertificationsPage = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          type: "certifications",
-          ids: reorderedCertifications.map((item) => item._id),
+          type: "projects",
+          ids: reorderedProjects.map((item) => item._id),
         }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(
-          data.message || "Failed to update certification order!",
-        );
+        throw new Error(data.message || "Failed to update project order!");
       }
     } catch (error) {
       setError(error.message);
-
-      await fetchCertifications();
+      await fetchProjects();
     }
   };
 
   useEffect(() => {
-    fetchCertifications();
+    fetchProjects();
   }, []);
 
-  // Search certifications
-  const filteredCertifications = certifications.filter((item) => {
+  // Search projects
+  const filteredProjects = projects.filter((item) => {
     const searchValue = search.toLowerCase();
+
+    const technologyMatch = item.technologies?.some((technology) =>
+      technology.name?.toLowerCase().includes(searchValue),
+    );
 
     return (
       item.title?.toLowerCase().includes(searchValue) ||
-      item.issuer?.toLowerCase().includes(searchValue) ||
-      item.credential?.toLowerCase().includes(searchValue)
+      item.category?.toLowerCase().includes(searchValue) ||
+      item.projectStatus?.toLowerCase().includes(searchValue) ||
+      technologyMatch
     );
   });
 
@@ -123,7 +142,7 @@ const CertificationsPage = () => {
     }));
   };
 
-  // Handle certificate image upload
+  // Handle project image upload
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
 
@@ -152,7 +171,7 @@ const CertificationsPage = () => {
         throw new Error("Only JPG, PNG and WebP images are allowed!");
       }
 
-      // Get temporary upload URL from our API
+      // Get temporary upload URL
       const urlResponse = await fetch("/api/upload/image", {
         method: "POST",
         headers: {
@@ -170,7 +189,7 @@ const CertificationsPage = () => {
         throw new Error(urlData.message || "Failed to prepare image upload!");
       }
 
-      // Upload image directly to Cloudflare R2
+      // Upload directly to Cloudflare R2
       const uploadResponse = await fetch(urlData.uploadUrl, {
         method: "PUT",
         headers: {
@@ -186,7 +205,7 @@ const CertificationsPage = () => {
       // Create public image URL
       const imageUrl = `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${urlData.key}`;
 
-      // Save image URL in formData
+      // Save image URL
       setFormData((prev) => ({
         ...prev,
         image: imageUrl,
@@ -196,12 +215,12 @@ const CertificationsPage = () => {
     } finally {
       setUploadingImage(false);
 
-      // Allow selecting the same file again
+      // Allow selecting same file again
       event.target.value = "";
     }
   };
 
-  // Handle certificate image remove
+  // Remove project image
   const handleRemoveImage = () => {
     setFormData((prev) => ({
       ...prev,
@@ -209,81 +228,90 @@ const CertificationsPage = () => {
     }));
   };
 
-  // Add array item
-  const addArrayItem = (name) => {
+  // Add technology
+  const addTechnology = () => {
     setFormData((prev) => ({
       ...prev,
-      [name]: [...prev[name], ""],
+      technologies: [...prev.technologies, { ...emptyTechnology }],
     }));
   };
 
-  // Handle array change
-  const handleArrayChange = (name, index, value) => {
+  // Handle technology change
+  const handleTechnologyChange = (index, field, value) => {
     setFormData((prev) => {
-      const items = [...prev[name]];
+      const technologies = [...prev.technologies];
 
-      items[index] = value;
+      technologies[index] = {
+        ...technologies[index],
+        [field]: value,
+      };
 
       return {
         ...prev,
-        [name]: items,
+        technologies,
       };
     });
   };
 
-  // Remove array item
-  const removeArrayItem = (name, index) => {
+  // Remove technology
+  const removeTechnology = (index) => {
     setFormData((prev) => {
-      if (prev[name].length === 1) {
+      if (prev.technologies.length === 1) {
         return prev;
       }
 
       return {
         ...prev,
-        [name]: prev[name].filter((_, itemIndex) => itemIndex !== index),
+        technologies: prev.technologies.filter(
+          (_, itemIndex) => itemIndex !== index,
+        ),
       };
     });
   };
 
-  // Create certification
+  // Create project
   const handleCreate = () => {
     setError("");
-    setEditingCertification(null);
+    setEditingProject(null);
 
     setFormData({
       title: "",
-      issuer: "",
-      duration: "",
-      credential: "",
-      image: "",
+      category: "Full Stack",
       description: "",
-      highlights: [""],
-      technologies: [""],
+      image: "",
+      technologies: [{ ...emptyTechnology }],
+      liveUrl: "",
+      githubUrl: "",
+      projectStatus: "Completed",
+      publishedDate: getTodayDate(),
+      featured: false,
       status: true,
     });
 
     setModalOpen(true);
   };
 
-  // Edit certification
-  const handleEdit = (certification) => {
+  // Edit project
+  const handleEdit = (project) => {
     setError("");
-    setEditingCertification(certification);
+    setEditingProject(project);
 
     setFormData({
-      title: certification.title || "",
-      issuer: certification.issuer || "",
-      duration: certification.duration || "",
-      credential: certification.credential || "",
-      image: certification.image || "",
-      description: certification.description || "",
-      highlights:
-        certification.highlights?.length > 0 ? certification.highlights : [""],
-      technologies:
-        certification.technologies?.length > 0
-          ? certification.technologies
-          : [""],
-      status: certification.status ?? true,
+      title: project.title || "",
+      category: project.category || "Full Stack",
+      description: project.description || "",
+      image: project.image || "",
+      technologies: project.technologies?.length
+        ? project.technologies
+        : [{ name: "", icon: "", color: "" }],
+      liveUrl: project.liveUrl || "",
+      githubUrl: project.githubUrl || "",
+      projectStatus: project.projectStatus || "Completed",
+      publishedDate: project.publishedDate
+        ? String(project.publishedDate).slice(0, 10)
+        : getTodayDate(),
+      featured: project.featured ?? false,
+      status: project.status ?? true,
     });
 
     setModalOpen(true);
@@ -301,7 +329,6 @@ const CertificationsPage = () => {
   // Submit form
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     setError("");
 
     try {
@@ -311,26 +338,35 @@ const CertificationsPage = () => {
         ...formData,
 
         title: formData.title.trim(),
-        issuer: formData.issuer.trim(),
-        duration: formData.duration.trim(),
-        credential: formData.credential.trim(),
-        image: formData.image.trim(),
+
+        category: formData.category.trim(),
+
         description: formData.description.trim(),
 
-        highlights: formData.highlights
-          .map((item) => item.trim())
-          .filter(Boolean),
+        image: formData.image.trim(),
 
         technologies: formData.technologies
-          .map((item) => item.trim())
-          .filter(Boolean),
+          .map((technology) => ({
+            name: technology.name.trim(),
+            icon: technology.icon.trim(),
+            color: technology.color.trim(),
+          }))
+          .filter((technology) => technology.name),
+
+        liveUrl: formData.liveUrl.trim(),
+
+        githubUrl: formData.githubUrl.trim(),
+
+        projectStatus: formData.projectStatus,
+
+        publishedDate: formData.publishedDate,
       };
 
-      let url = "/api/certifications";
+      let url = "/api/projects";
       let method = "POST";
 
-      if (editingCertification) {
-        url = `/api/certifications/${editingCertification._id}`;
+      if (editingProject) {
+        url = `/api/projects/${editingProject._id}`;
         method = "PATCH";
       }
 
@@ -349,31 +385,33 @@ const CertificationsPage = () => {
         return;
       }
 
-      const wasEditing = editingCertification;
+      const wasEditing = editingProject;
 
       setModalOpen(false);
-      setEditingCertification(null);
+      setEditingProject(null);
 
       setFormData({
         title: "",
-        issuer: "",
-        duration: "",
-        credential: "",
-        image: "",
+        category: "Full Stack",
         description: "",
-        highlights: [""],
-        technologies: [""],
+        image: "",
+        technologies: [{ ...emptyTechnology }],
+        liveUrl: "",
+        githubUrl: "",
+        projectStatus: "Completed",
+        publishedDate: getTodayDate(),
+        featured: false,
         status: true,
       });
 
-      await fetchCertifications();
+      await fetchProjects();
 
       await Swal.fire({
         icon: "success",
-        title: wasEditing ? "Certification Updated!" : "Certification Created!",
+        title: wasEditing ? "Project Updated!" : "Project Created!",
         text: wasEditing
-          ? "Certification has been updated successfully."
-          : "Certification has been created successfully.",
+          ? "Project has been updated successfully."
+          : "Project has been created successfully.",
         timer: 1500,
         showConfirmButton: false,
       });
@@ -384,10 +422,10 @@ const CertificationsPage = () => {
     }
   };
 
-  // Delete certification
+  // Delete project
   const handleDelete = async (id) => {
     const result = await Swal.fire({
-      title: "Delete Certification?",
+      title: "Delete Project?",
       text: "You won't be able to undo this!",
       icon: "warning",
       showCancelButton: true,
@@ -405,7 +443,7 @@ const CertificationsPage = () => {
     try {
       setDeletingId(id);
 
-      const res = await fetch(`/api/certifications/${id}`, {
+      const res = await fetch(`/api/projects/${id}`, {
         method: "DELETE",
       });
 
@@ -415,18 +453,18 @@ const CertificationsPage = () => {
         await Swal.fire({
           icon: "error",
           title: "Delete Failed!",
-          text: data.message || "Failed to delete certification.",
+          text: data.message || "Failed to delete project.",
         });
 
         return;
       }
 
-      setCertifications((prev) => prev.filter((item) => item._id !== id));
+      setProjects((prev) => prev.filter((item) => item._id !== id));
 
       await Swal.fire({
         icon: "success",
         title: "Deleted!",
-        text: "Certification has been deleted successfully.",
+        text: "Project has been deleted successfully.",
         timer: 1500,
         showConfirmButton: false,
       });
@@ -446,10 +484,10 @@ const CertificationsPage = () => {
       {/* Page Header */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Certifications</h1>
+          <h1 className="text-2xl font-semibold">Projects</h1>
 
           <p className="mt-1 text-sm text-base-content/45">
-            Manage the certifications displayed on your portfolio.
+            Manage the projects displayed on your portfolio.
           </p>
         </div>
 
@@ -459,7 +497,7 @@ const CertificationsPage = () => {
           className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-content transition-all duration-200 active:scale-[.95] sm:w-fit"
         >
           <FiPlus size={17} />
-          Create Certification
+          Create Project
         </button>
       </div>
 
@@ -470,7 +508,7 @@ const CertificationsPage = () => {
 
           <input
             type="text"
-            placeholder="Search certification..."
+            placeholder="Search project..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full bg-transparent text-sm outline-none placeholder:text-base-content/30"
@@ -478,7 +516,7 @@ const CertificationsPage = () => {
         </div>
 
         <div className="text-xs text-base-content/40">
-          {filteredCertifications.length} Certifications
+          {filteredProjects.length} Projects
         </div>
       </div>
 
@@ -486,33 +524,35 @@ const CertificationsPage = () => {
       <div className="overflow-hidden rounded-2xl border border-base-content/10 bg-base-100">
         {/* Table Header */}
         <div className="hidden grid-cols-12 border-b border-base-content/10 bg-base-200 px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-base-content/35 md:grid">
-          <div className="col-span-5">Certification</div>
+          <div className="col-span-4">Project</div>
 
-          <div className="col-span-3">Issuer</div>
+          <div className="col-span-2">Category</div>
+
+          <div className="col-span-2">Project Status</div>
 
           <div className="col-span-2">Status</div>
 
           <div className="col-span-2 text-right">Action</div>
         </div>
 
-        {/* Certification List */}
+        {/* Project List */}
         <div className="divide-y divide-base-content/10">
           {loading ? (
             <WorkExperienceLoading />
-          ) : error && certifications.length === 0 ? (
+          ) : error && projects.length === 0 ? (
             <div className="px-5 py-10 text-center">
               <p className="text-sm text-error">{error}</p>
             </div>
-          ) : filteredCertifications.length === 0 ? (
+          ) : filteredProjects.length === 0 ? (
             <div className="flex flex-col items-center justify-center px-5 py-14 text-center">
               <p className="text-sm font-medium text-base-content/50">
-                No certification found
+                No project found
               </p>
 
               <p className="mt-1 text-xs text-base-content/30">
                 {search
-                  ? "No certification matches your search."
-                  : "Create your first certification to get started."}
+                  ? "No project matches your search."
+                  : "Create your first project to get started."}
               </p>
 
               {!search && (
@@ -522,19 +562,16 @@ const CertificationsPage = () => {
                   className="mt-5 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-content transition-all duration-200 active:scale-[.95] sm:w-fit"
                 >
                   <FiPlus size={17} />
-                  Create Certification
+                  Create Project
                 </button>
               )}
             </div>
           ) : (
-            <ReorderList
-              items={filteredCertifications}
-              onReorder={handleReorder}
-            >
-              {(certification, { attributes, listeners }) => (
+            <ReorderList items={filteredProjects} onReorder={handleReorder}>
+              {(project, { attributes, listeners }) => (
                 <div className="grid min-w-0 grid-cols-1 gap-5 overflow-hidden px-4 py-4 transition-colors hover:bg-base-content/[0.02] sm:px-5 sm:py-5 md:grid-cols-12 md:items-center md:gap-0">
-                  {/* Certification */}
-                  <div className="min-w-0 md:col-span-5">
+                  {/* Project */}
+                  <div className="min-w-0 md:col-span-4">
                     <div className="flex min-w-0 items-start justify-between gap-4">
                       <div className="flex min-w-0 items-center gap-3">
                         {/* Drag Handle */}
@@ -548,18 +585,33 @@ const CertificationsPage = () => {
                           <FiMenu size={16} />
                         </button>
 
+                        {/* Project Image */}
+                        <div className="hidden h-12 w-16 shrink-0 overflow-hidden rounded-lg border border-base-content/10 bg-base-200 sm:block">
+                          {project.image ? (
+                            <Image
+                              src={project.image}
+                              alt={project.title}
+                              width={64}
+                              height={48}
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center text-[10px] text-base-content/25">
+                              No Image
+                            </div>
+                          )}
+                        </div>
+
                         <div className="min-w-0">
                           <p className="break-words text-sm font-medium">
-                            {certification.title}
+                            {project.title}
                           </p>
 
                           <p className="mt-1 break-words text-xs text-primary">
-                            {certification.issuer}
+                            {project.category}
                           </p>
 
-                          <p className="mt-0.5 break-words text-[11px] text-base-content/35">
-                            Certification #{String(certification._id).slice(-6)}
-                          </p>
+                         
                         </div>
                       </div>
 
@@ -567,7 +619,7 @@ const CertificationsPage = () => {
                       <div className="flex shrink-0 items-center gap-2 md:hidden">
                         <button
                           type="button"
-                          onClick={() => handleEdit(certification)}
+                          onClick={() => handleEdit(project)}
                           className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
                           title="Edit"
                         >
@@ -576,12 +628,12 @@ const CertificationsPage = () => {
 
                         <button
                           type="button"
-                          onClick={() => handleDelete(certification._id)}
-                          disabled={deletingId === certification._id}
+                          onClick={() => handleDelete(project._id)}
+                          disabled={deletingId === project._id}
                           className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
                           title="Delete"
                         >
-                          {deletingId === certification._id ? (
+                          {deletingId === project._id ? (
                             <FiLoader size={15} className="animate-spin" />
                           ) : (
                             <FiTrash2 size={15} />
@@ -591,26 +643,49 @@ const CertificationsPage = () => {
                     </div>
                   </div>
 
-                  {/* Issuer */}
-                  <div className="min-w-0 md:col-span-3">
+                  {/* Category */}
+                  <div className="min-w-0 md:col-span-2">
                     <div className="flex min-w-0 items-center justify-between gap-3 md:block">
                       <span className="shrink-0 text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
-                        Issuer
+                        Category
                       </span>
 
                       <div className="min-w-0 flex-1 text-right md:text-left">
                         <p className="break-words text-xs text-base-content/65">
-                          {certification.issuer}
+                          {project.category}
                         </p>
 
                         <p className="mt-1 text-[11px] text-base-content/35">
-                          {certification.duration}
+                          {formatDate(project.publishedDate)}
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  {/* Status */}
+                  {/* Project Status */}
+                  <div className="min-w-0 md:col-span-2">
+                    <div className="flex min-w-0 items-center justify-between gap-3 md:block">
+                      <span className="shrink-0 text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
+                        Project Status
+                      </span>
+
+                      <div className="shrink-0">
+                        {project.projectStatus === "Ongoing" ? (
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-warning/20 bg-warning/10 px-2.5 py-1 text-[11px] font-medium text-warning">
+                            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-warning" />
+                            Ongoing
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-[11px] font-medium text-success">
+                            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-success" />
+                            Completed
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Active Status */}
                   <div className="min-w-0 md:col-span-2">
                     <div className="flex min-w-0 items-center justify-between gap-3 md:block">
                       <span className="shrink-0 text-[10px] font-medium uppercase tracking-wider text-base-content/30 md:hidden">
@@ -618,7 +693,7 @@ const CertificationsPage = () => {
                       </span>
 
                       <div className="shrink-0">
-                        {certification.status ? (
+                        {project.status ? (
                           <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-[11px] font-medium text-success">
                             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-success" />
                             Active
@@ -636,7 +711,7 @@ const CertificationsPage = () => {
                   <div className="hidden items-center justify-end gap-2 md:col-span-2 md:flex">
                     <button
                       type="button"
-                      onClick={() => handleEdit(certification)}
+                      onClick={() => handleEdit(project)}
                       className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-all active:scale-[0.95]"
                       title="Edit"
                     >
@@ -645,12 +720,12 @@ const CertificationsPage = () => {
 
                     <button
                       type="button"
-                      onClick={() => handleDelete(certification._id)}
-                      disabled={deletingId === certification._id}
+                      onClick={() => handleDelete(project._id)}
+                      disabled={deletingId === project._id}
                       className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/20 text-error transition-all disabled:cursor-not-allowed disabled:opacity-50"
                       title="Delete"
                     >
-                      {deletingId === certification._id ? (
+                      {deletingId === project._id ? (
                         <FiLoader size={15} className="animate-spin" />
                       ) : (
                         <FiTrash2 size={15} />
@@ -683,15 +758,13 @@ const CertificationsPage = () => {
           <div className="flex shrink-0 items-center justify-between border-b border-base-content/10 bg-base-100 px-5 py-4">
             <div>
               <h2 className="text-lg font-semibold">
-                {editingCertification
-                  ? "Update Certification"
-                  : "Create Certification"}
+                {editingProject ? "Update Project" : "Create Project"}
               </h2>
 
               <p className="mt-0.5 text-xs text-base-content/40">
-                {editingCertification
-                  ? "Update the selected certification information."
-                  : "Add a new certification to your portfolio."}
+                {editingProject
+                  ? "Update the selected project information."
+                  : "Add a new project to your portfolio."}
               </p>
             </div>
 
@@ -718,7 +791,7 @@ const CertificationsPage = () => {
               {/* Title */}
               <div>
                 <label className="mb-2 block text-xs font-medium text-base-content/70">
-                  Certification Title
+                  Project Title
                 </label>
 
                 <input
@@ -726,66 +799,75 @@ const CertificationsPage = () => {
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
-                  placeholder="e.g. Professional Web Application Development using Laravel & React"
+                  placeholder="e.g. EverFast Express"
                   className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
                 />
               </div>
 
-              {/* Issuer */}
+              {/* Category + Project Status */}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {/* Category */}
+                <div>
+                  <label className="mb-2 block text-xs font-medium text-base-content/70">
+                    Category
+                  </label>
+
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-primary/40"
+                  >
+                    <option value="Full Stack">Full Stack</option>
+
+                    <option value="Frontend">Frontend</option>
+
+                    <option value="Backend">Backend</option>
+                  </select>
+                </div>
+
+                {/* Project Status */}
+                <div>
+                  <label className="mb-2 block text-xs font-medium text-base-content/70">
+                    Project Status
+                  </label>
+
+                  <select
+                    name="projectStatus"
+                    value={formData.projectStatus}
+                    onChange={handleChange}
+                    className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-primary/40"
+                  >
+                    <option value="Completed">Completed</option>
+
+                    <option value="Ongoing">Ongoing</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Published Date */}
               <div>
                 <label className="mb-2 block text-xs font-medium text-base-content/70">
-                  Issuer
+                  Published Date
                 </label>
 
                 <input
-                  type="text"
-                  name="issuer"
-                  value={formData.issuer}
+                  type="date"
+                  name="publishedDate"
+                  value={formData.publishedDate}
                   onChange={handleChange}
-                  placeholder="e.g. ISDB-BISEW IT Scholarship Project"
-                  className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
+                  className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-primary/40"
                 />
+
+                <p className="mt-1.5 text-[11px] text-base-content/35">
+                  By default, today&apos;s date is selected.
+                </p>
               </div>
 
-              {/* Duration + Credential */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {/* Duration */}
-                <div>
-                  <label className="mb-2 block text-xs font-medium text-base-content/70">
-                    Duration
-                  </label>
-
-                  <input
-                    type="text"
-                    name="duration"
-                    value={formData.duration}
-                    onChange={handleChange}
-                    placeholder="e.g. 2026"
-                    className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
-                  />
-                </div>
-
-                {/* Credential */}
-                <div>
-                  <label className="mb-2 block text-xs font-medium text-base-content/70">
-                    Credential
-                  </label>
-
-                  <input
-                    type="text"
-                    name="credential"
-                    value={formData.credential}
-                    onChange={handleChange}
-                    placeholder="e.g. Certificate"
-                    className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
-                  />
-                </div>
-              </div>
-
-              {/* Certificate Image */}
+              {/* Project Image */}
               <div>
                 <label className="mb-2 block text-xs font-medium text-base-content/70">
-                  Certificate Image
+                  Project Image
                 </label>
 
                 <input
@@ -828,10 +910,13 @@ const CertificationsPage = () => {
                     </div>
 
                     <div className="p-4">
-                      <img
+                      <Image
                         src={formData.image}
-                        alt="Certificate preview"
-                        className="h-48 w-full rounded-lg object-contain"
+                        alt="Project preview"
+                        width={800}
+                        height={400}
+                        className="h-48 w-full object-contain"
+                        unoptimized
                       />
                     </div>
                   </div>
@@ -849,53 +934,9 @@ const CertificationsPage = () => {
                   value={formData.description}
                   onChange={handleChange}
                   rows={4}
-                  placeholder="Write a short description about this certification..."
+                  placeholder="Write a short description about this project..."
                   className="w-full resize-none rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
                 />
-              </div>
-
-              {/* Highlights */}
-              <div>
-                <div className="mb-2 flex items-center justify-between">
-                  <label className="block text-xs font-medium text-base-content/70">
-                    Key Highlights
-                  </label>
-
-                  <button
-                    type="button"
-                    onClick={() => addArrayItem("highlights")}
-                    className="inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-primary"
-                  >
-                    <FiPlus size={14} />
-                    Add
-                  </button>
-                </div>
-
-                <div className="space-y-2">
-                  {formData.highlights.map((item, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        value={item}
-                        onChange={(e) =>
-                          handleArrayChange("highlights", index, e.target.value)
-                        }
-                        placeholder={`Highlight ${index + 1}`}
-                        className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
-                      />
-
-                      {formData.highlights.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeArrayItem("highlights", index)}
-                          className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/10 text-error transition-all active:scale-[.95]"
-                        >
-                          <FiX size={15} />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
               </div>
 
               {/* Technologies */}
@@ -907,52 +948,199 @@ const CertificationsPage = () => {
 
                   <button
                     type="button"
-                    onClick={() => addArrayItem("technologies")}
+                    onClick={addTechnology}
                     className="inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-primary"
                   >
                     <FiPlus size={14} />
-                    Add
+                    Add Technology
                   </button>
                 </div>
 
-                <div className="space-y-2">
-                  {formData.technologies.map((item, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        value={item}
-                        onChange={(e) =>
-                          handleArrayChange(
-                            "technologies",
-                            index,
-                            e.target.value,
-                          )
-                        }
-                        placeholder={`Technology ${index + 1}`}
-                        className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
-                      />
+                <p className="mb-3 text-[11px] text-base-content/35">
+                  Technology name is required. Icon name and color are optional.
+                </p>
 
-                      {formData.technologies.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeArrayItem("technologies", index)}
-                          className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/10 text-error transition-all active:scale-[.95]"
-                        >
-                          <FiX size={15} />
-                        </button>
-                      )}
+                <div className="space-y-3">
+                  {formData.technologies.map((technology, index) => (
+                    <div
+                      key={index}
+                      className="rounded-xl border border-base-content/10 bg-base-200 p-3"
+                    >
+                      {/* Technology Header */}
+                      <div className="mb-3 flex items-center justify-between">
+                        <p className="text-[11px] font-medium text-base-content/40">
+                          Technology #{index + 1}
+                        </p>
+
+                        {formData.technologies.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeTechnology(index)}
+                            className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-error/20 bg-error/10 text-error transition-all active:scale-[.95]"
+                            title="Remove Technology"
+                          >
+                            <FiX size={14} />
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Technology Name */}
+                      <div className="mb-3">
+                        <label className="mb-1.5 block text-[11px] font-medium text-base-content/60">
+                          Technology Name
+                          <span className="ml-1 text-error">*</span>
+                        </label>
+
+                        <input
+                          type="text"
+                          value={technology.name}
+                          onChange={(e) =>
+                            handleTechnologyChange(
+                              index,
+                              "name",
+                              e.target.value,
+                            )
+                          }
+                          placeholder="e.g. React"
+                          className="w-full rounded-lg border border-base-content/10 bg-base-100 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
+                        />
+                      </div>
+
+                      {/* Icon Name + Color */}
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        {/* Icon Name */}
+                        <div>
+                          <label className="mb-1.5 block text-[11px] font-medium text-base-content/60">
+                            Icon Name
+                            <span className="ml-1 text-base-content/30">
+                              (Optional)
+                            </span>
+                          </label>
+
+                          <input
+                            type="text"
+                            value={technology.icon}
+                            onChange={(e) =>
+                              handleTechnologyChange(
+                                index,
+                                "icon",
+                                e.target.value,
+                              )
+                            }
+                            placeholder="e.g. FaReact"
+                            className="w-full rounded-lg border border-base-content/10 bg-base-100 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
+                          />
+
+                          <p className="mt-1 text-[10px] text-base-content/30">
+                            Example: FaReact, SiNextdotjs
+                          </p>
+                        </div>
+
+                        {/* Icon Color */}
+                        <div>
+                          <label className="mb-1.5 block text-[11px] font-medium text-base-content/60">
+                            Icon Color
+                            <span className="ml-1 text-base-content/30">
+                              (Optional)
+                            </span>
+                          </label>
+
+                          <div className="flex gap-2">
+                            <input
+                              type="color"
+                              value={technology.color || "#000000"}
+                              onChange={(e) =>
+                                handleTechnologyChange(
+                                  index,
+                                  "color",
+                                  e.target.value,
+                                )
+                              }
+                              className="h-10 w-12 shrink-0 cursor-pointer rounded-lg border border-base-content/10 bg-base-100 p-1"
+                            />
+
+                            <input
+                              type="text"
+                              value={technology.color}
+                              onChange={(e) =>
+                                handleTechnologyChange(
+                                  index,
+                                  "color",
+                                  e.target.value,
+                                )
+                              }
+                              placeholder="#61DAFB"
+                              className="w-full rounded-lg border border-base-content/10 bg-base-100 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Status */}
+              {/* Live URL + GitHub URL */}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {/* Live URL */}
+                <div>
+                  <label className="mb-2 block text-xs font-medium text-base-content/70">
+                    Live Demo URL
+                  </label>
+
+                  <input
+                    type="url"
+                    name="liveUrl"
+                    value={formData.liveUrl}
+                    onChange={handleChange}
+                    placeholder="https://example.com"
+                    className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
+                  />
+                </div>
+
+                {/* GitHub URL */}
+                <div>
+                  <label className="mb-2 block text-xs font-medium text-base-content/70">
+                    GitHub URL
+                  </label>
+
+                  <input
+                    type="url"
+                    name="githubUrl"
+                    value={formData.githubUrl}
+                    onChange={handleChange}
+                    placeholder="https://github.com/..."
+                    className="w-full rounded-lg border border-base-content/10 bg-base-200 px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-base-content/25 focus:border-primary/40"
+                  />
+                </div>
+              </div>
+
+              {/* Featured */}
               <div className="flex items-center justify-between rounded-xl border border-base-content/10 bg-base-200 px-4 py-3">
                 <div>
-                  <p className="text-sm font-medium">Active Certification</p>
+                  <p className="text-sm font-medium">Featured Project</p>
 
                   <p className="mt-0.5 text-[11px] text-base-content/40">
-                    Show this certification on your portfolio.
+                    Highlight this project on your portfolio.
+                  </p>
+                </div>
+
+                <input
+                  type="checkbox"
+                  name="featured"
+                  checked={formData.featured}
+                  onChange={handleChange}
+                  className="toggle toggle-primary"
+                />
+              </div>
+
+              {/* Active Status */}
+              <div className="flex items-center justify-between rounded-xl border border-base-content/10 bg-base-200 px-4 py-3">
+                <div>
+                  <p className="text-sm font-medium">Active Project</p>
+
+                  <p className="mt-0.5 text-[11px] text-base-content/40">
+                    Show this project on your portfolio.
                   </p>
                 </div>
 
@@ -985,12 +1173,12 @@ const CertificationsPage = () => {
                     <>
                       <Spin />
 
-                      {editingCertification ? "Updating..." : "Creating..."}
+                      {editingProject ? "Updating..." : "Creating..."}
                     </>
-                  ) : editingCertification ? (
-                    "Update Certification"
+                  ) : editingProject ? (
+                    "Update Project"
                   ) : (
-                    "Create Certification"
+                    "Create Project"
                   )}
                 </button>
               </div>
@@ -1002,4 +1190,4 @@ const CertificationsPage = () => {
   );
 };
 
-export default CertificationsPage;
+export default ProjectsPage;
