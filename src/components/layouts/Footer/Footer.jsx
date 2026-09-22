@@ -9,7 +9,7 @@ import { FiArrowRight, FiChevronRight, FiMail } from "react-icons/fi";
 import { HiOutlineEnvelope } from "react-icons/hi2";
 import MagneticButton from "@/components/Buttons/MagneticButton";
 import Reveal from "@/components/Reavel/Reavel";
-
+import SocialLoader from "@/components/Social/SocialLoader";
 
 const Footer = () => {
   const scrollToTop = () => {
@@ -21,7 +21,10 @@ const Footer = () => {
 
   return (
     <footer>
-      <div id="contact" className="h-px w-full bg-linear-to-r from-transparent via-gray-400 to-transparent" />
+      <div
+        id="contact"
+        className="h-px w-full bg-linear-to-r from-transparent via-gray-400 to-transparent"
+      />
 
       <div>
         <div className="bg-base-200/70 relative overflow-hidden">
@@ -142,7 +145,7 @@ const Footer = () => {
 
                     <li>
                       <Link
-                        href="/about"
+                        href="/#about"
                         className="w-fit group flex items-center gap-2 transition-colors duration-300 hover:text-primary"
                       >
                         <FiChevronRight
@@ -155,7 +158,7 @@ const Footer = () => {
 
                     <li>
                       <Link
-                        href="/about"
+                        href="/projects"
                         className="w-fit group flex items-center gap-2 transition-colors duration-300 hover:text-primary"
                       >
                         <FiChevronRight
@@ -168,7 +171,7 @@ const Footer = () => {
 
                     <li>
                       <Link
-                        href="/blog"
+                        href="/blogs"
                         className="w-fit group flex items-center gap-2 transition-colors duration-300 hover:text-primary"
                       >
                         <FiChevronRight
@@ -181,7 +184,7 @@ const Footer = () => {
 
                     <li>
                       <Link
-                        href="/contact"
+                        href="/#contact"
                         className="w-fit group flex items-center gap-2 transition-colors duration-300 hover:text-primary"
                       >
                         <FiChevronRight
@@ -206,33 +209,7 @@ const Footer = () => {
                   <h4 className="font-semibold text-lg mb-4">Let's Connect</h4>
 
                   <div className="flex items-center gap-4">
-                    <a
-                      href="#"
-                      className="w-11 h-11 rounded-full border-2 border-white/10 flex items-center justify-center hover:border-primary hover:text-primary hover:-translate-y-1 transition-all"
-                    >
-                      <FaGithub size={18} />
-                    </a>
-
-                    <a
-                      href="#"
-                      className="w-11 h-11 rounded-full border-2 border-white/10 flex items-center justify-center hover:border-primary hover:text-primary hover:-translate-y-1 transition-all"
-                    >
-                      <FaLinkedin size={18} />
-                    </a>
-
-                    <a
-                      href="#"
-                      className="w-11 h-11 rounded-full border-2 border-white/10 flex items-center justify-center hover:border-primary hover:text-primary hover:-translate-y-1 transition-all"
-                    >
-                      <FaFacebook size={18} />
-                    </a>
-
-                    <a
-                      href="mailto:hello@example.com"
-                      className="w-11 h-11 rounded-full border-2 border-white/10 flex items-center justify-center hover:border-primary hover:text-primary hover:-translate-y-1 transition-all"
-                    >
-                      <HiOutlineEnvelope size={20} />
-                    </a>
+                    <SocialLoader defaultClass="w-11 h-11 rounded-full border-2 border-white/10 flex items-center justify-center hover:border-primary hover:text-primary hover:-translate-y-1 transition-all" />
                   </div>
 
                   <div className="hover-underline mt-6 inline-block">

@@ -1,11 +1,11 @@
 "use client";
 
 import Reveal from "@/components/Reavel/Reavel";
+import SocialLoader from "@/components/Social/SocialLoader";
 import Image from "next/image";
 import { FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa6";
 import { FiCheck, FiMail, FiMapPin, FiUser } from "react-icons/fi";
 import { HiOutlineEnvelope } from "react-icons/hi2";
-
 
 const About = () => {
   const handleMouseMove = (e) => {
@@ -63,33 +63,7 @@ const About = () => {
 
                 {/* Social */}
                 <div className="flex justify-center gap-4">
-                  <a
-                    href="#"
-                    className="group flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-base-200 hover:bg-primary hover:text-black hover:border-primary transition-all duration-300 hover:-translate-y-1"
-                  >
-                    <FaGithub size={20} />
-                  </a>
-
-                  <a
-                    href="#"
-                    className="group flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-base-200 hover:bg-primary hover:text-black hover:border-primary transition-all duration-300 hover:-translate-y-1"
-                  >
-                    <FaLinkedin size={20} />
-                  </a>
-
-                  <a
-                    href="#"
-                    className="group flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-base-200 hover:bg-primary hover:text-black hover:border-primary transition-all duration-300 hover:-translate-y-1"
-                  >
-                    <FaFacebook size={20} />
-                  </a>
-
-                  <a
-                    href="#"
-                    className="group flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-base-200 hover:bg-primary hover:text-black hover:border-primary transition-all duration-300 hover:-translate-y-1"
-                  >
-                    <HiOutlineEnvelope size={20} />
-                  </a>
+                  <SocialLoader defaultClass="group flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-base-200 hover:bg-primary hover:text-black hover:border-primary transition-all duration-300 hover:-translate-y-1" />
                 </div>
               </div>
             </div>

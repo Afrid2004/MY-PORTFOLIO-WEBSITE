@@ -15,7 +15,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const resize = () => {
-      if (window.innerWidth >= 768) {
+      if (window.innerWidth >= 1024) {
         setMenu(false);
       }
     };
@@ -95,6 +95,17 @@ const Navbar = () => {
         viewport={0}
       >
         <li>
+          <NavLink href="/projects">Projects</NavLink>
+        </li>
+      </Reveal>
+
+      <Reveal
+        initial="opacity-0 -translate-y-3"
+        view="opacity-100 translate-y-0"
+        transition="transition-all duration-400 ease-out delay-[320ms]"
+        viewport={0}
+      >
+        <li>
           <NavLink href="/blogs">Blogs</NavLink>
         </li>
       </Reveal>
@@ -134,14 +145,14 @@ const Navbar = () => {
                 {/* Desktop navigation menus */}
                 <nav>
                   <div className="flex items-center gap-1">
-                    <ul className="items-center gap-1 hidden md:flex">
+                    <ul className="items-center gap-1 hidden lg:flex">
                       {menus}
                     </ul>
 
                     {/* Menu bar */}
                     <button
                       onClick={() => setMenu(!menu)}
-                      className="relative bg-primary text-base-200 active:bg-primary-hover cursor-pointer w-10 h-10 flex items-center justify-center rounded-full md:hidden"
+                      className="relative bg-primary text-base-200 active:bg-primary-hover cursor-pointer w-10 h-10 flex items-center justify-center rounded-full lg:hidden"
                     >
                       <FiMenu
                         size={20}
