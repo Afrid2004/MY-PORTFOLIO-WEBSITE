@@ -95,7 +95,7 @@ const Navbar = () => {
         viewport={0}
       >
         <li>
-          <NavLink href="/#blogs">Blogs</NavLink>
+          <NavLink href="/blogs">Blogs</NavLink>
         </li>
       </Reveal>
 

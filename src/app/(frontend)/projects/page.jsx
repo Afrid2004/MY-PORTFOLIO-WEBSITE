@@ -50,14 +50,12 @@ const ProjectsPage = () => {
     if (activeCategory === "All") {
       return true;
     }
-
     return project.category === activeCategory;
   });
 
   // Search Filter
   const searchProjects = categoryProjects.filter((project) => {
     const searchValue = search.toLowerCase();
-
     return (
       project.title?.toLowerCase().includes(searchValue) ||
       project.description?.toLowerCase().includes(searchValue) ||

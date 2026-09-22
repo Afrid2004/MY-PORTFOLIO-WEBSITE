@@ -28,6 +28,7 @@ export async function POST(request) {
       certifications: collections.certifications,
       blogs: collections.blogs,
       projects: collections.projects,
+      testimonials: collections.testimonials,
     };
 
     if (!allowedCollections[type]) {
