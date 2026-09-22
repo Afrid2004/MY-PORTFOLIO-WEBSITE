@@ -31,10 +31,40 @@
   --color-error: #ef4444;
 }
 
+@plugin "daisyui/theme" {
+  name: "portfolio-light";
+  default: false;
+  prefersdark: false;
+
+  --color-primary: #0f172a;
+  --color-primary-content: #ffffff;
+
+  --color-secondary: #e2e8f0;
+  --color-secondary-content: #0f172a;
+
+  --color-accent: #00a88f;
+  --color-accent-content: #ffffff;
+
+  --color-base-100: #ffffff;
+  --color-base-200: #f8fafc;
+  --color-base-300: #e2e8f0;
+  --color-base-content: #0f172a;
+
+  --color-neutral: #e2e8f0;
+  --color-neutral-content: #0f172a;
+
+  --color-info: #0284c7;
+  --color-success: #16a34a;
+  --color-warning: #ca8a04;
+  --color-error: #dc2626;
+}
+
+@custom-variant dark (&:where([data-theme=portfolio-dark], [data-theme=portfolio-dark] *));
+
 body {
   overflow-x: hidden;
 }
-html{
+html {
   scroll-behavior: smooth;
 }
 .gradient-borders {
@@ -104,8 +134,6 @@ html{
   opacity: 1;
 }
 
-@custom-variant dark (&:where([data-theme=portfolio-dark], [data-theme=portfolio-dark] *));
-
 @utility container {
   @apply mx-auto w-full
         px-4 sm:px-6
@@ -155,7 +183,6 @@ html{
   }
 }
 
-
 /* taptap editor  */
 /* ==============================
    Tiptap Editor
@@ -204,11 +231,7 @@ html{
   margin: 1rem 0;
   border-left: 4px solid var(--color-primary);
   padding-left: 1rem;
-  color: color-mix(
-    in srgb,
-    var(--color-base-content) 70%,
-    transparent
-  );
+  color: color-mix(in srgb, var(--color-base-content) 70%, transparent);
   font-style: italic;
 }
 
@@ -253,18 +276,10 @@ html{
   float: left;
   height: 0;
   pointer-events: none;
-  color: color-mix(
-    in srgb,
-    var(--color-base-content) 30%,
-    transparent
-  );
+  color: color-mix(in srgb, var(--color-base-content) 30%, transparent);
 }
 
 /* Selection */
 .tiptap-editor .ProseMirror ::selection {
-  background: color-mix(
-    in srgb,
-    var(--color-primary) 30%,
-    transparent
-  );
+  background: color-mix(in srgb, var(--color-primary) 30%, transparent);
 }
