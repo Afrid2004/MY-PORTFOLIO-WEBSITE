@@ -30,35 +30,20 @@
   --color-warning: #facc15;
   --color-error: #ef4444;
 }
+@keyframes fab-shine {
+  0% {
+    transform: translateX(-150%) rotate(12deg);
+  }
 
-@plugin "daisyui/theme" {
-  name: "portfolio-light";
-  default: false;
-  prefersdark: false;
-
-  --color-primary: #0f172a;
-  --color-primary-content: #ffffff;
-
-  --color-secondary: #e2e8f0;
-  --color-secondary-content: #0f172a;
-
-  --color-accent: #00a88f;
-  --color-accent-content: #ffffff;
-
-  --color-base-100: #ffffff;
-  --color-base-200: #f8fafc;
-  --color-base-300: #e2e8f0;
-  --color-base-content: #0f172a;
-
-  --color-neutral: #e2e8f0;
-  --color-neutral-content: #0f172a;
-
-  --color-info: #0284c7;
-  --color-success: #16a34a;
-  --color-warning: #ca8a04;
-  --color-error: #dc2626;
+  25%,
+  100% {
+    transform: translateX(400%) rotate(12deg);
+  }
 }
 
+.animate-fab-shine {
+  animation: fab-shine 3s ease-in-out infinite;
+}
 @custom-variant dark (&:where([data-theme=portfolio-dark], [data-theme=portfolio-dark] *));
 
 body {
