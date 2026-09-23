@@ -46,27 +46,33 @@ jobs:
       - name: Upload to HostSeba
         if: github.event_name == 'push'
         run: |
-          scp -P ${{ secrets.SSH_PORT }} \
-            /tmp/portfolio.tar.gz \
-            ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tmp/portfolio.tar.gz
+          scp -o ServerAliveInterval=30 \
+              -o ServerAliveCountMax=10 \
+              -P ${{ secrets.SSH_PORT }} \
+              /tmp/portfolio.tar.gz \
+              ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tmp/portfolio.tar.gz
 
       # 5. Deploy project to HostSeba
       - name: Deploy project
         if: github.event_name == 'push'
         run: |
-          ssh -p ${{ secrets.SSH_PORT }} \
-            ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
-            "cd ${{ secrets.DEPLOY_PATH }} && \
-             rm -rf .next && \
-             tar -xzf /tmp/portfolio.tar.gz -C ${{ secrets.DEPLOY_PATH }} && \
-             rm -f /tmp/portfolio.tar.gz && \
-             ~/nodevenv/portfolio/20/bin/npm ci && \
-             ~/nodevenv/portfolio/20/bin/npm run build"
+          ssh -o ServerAliveInterval=30 \
+              -o ServerAliveCountMax=10 \
+              -p ${{ secrets.SSH_PORT }} \
+              ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
+              "cd ${{ secrets.DEPLOY_PATH }} && \
+               rm -rf .next && \
+               tar -xzf /tmp/portfolio.tar.gz -C ${{ secrets.DEPLOY_PATH }} && \
+               rm -f /tmp/portfolio.tar.gz && \
+               ~/nodevenv/portfolio/20/bin/npm ci && \
+               ~/nodevenv/portfolio/20/bin/npm run build"
 
       # 6. Restart cPanel Node.js application
       - name: Restart Node.js application
         if: github.event_name == 'push'
         run: |
-          ssh -p ${{ secrets.SSH_PORT }} \
-            ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
-            "touch ${{ secrets.DEPLOY_PATH }}/tmp/restart.txt"
+          ssh -o ServerAliveInterval=30 \
+              -o ServerAliveCountMax=10 \
+              -p ${{ secrets.SSH_PORT }} \
+              ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
+              "touch ${{ secrets.DEPLOY_PATH }}/tmp/restart.txt"
