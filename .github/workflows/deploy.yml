@@ -60,8 +60,8 @@ jobs:
              rm -rf .next && \
              tar -xzf /tmp/portfolio.tar.gz -C ${{ secrets.DEPLOY_PATH }} && \
              rm -f /tmp/portfolio.tar.gz && \
-             npm ci && \
-             npm run build"
+             ~/nodevenv/portfolio/20/bin/npm ci && \
+             ~/nodevenv/portfolio/20/bin/npm run build"
 
       # 6. Restart cPanel Node.js application
       - name: Restart Node.js application
