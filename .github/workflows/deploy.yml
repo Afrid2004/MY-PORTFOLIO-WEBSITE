@@ -53,7 +53,7 @@ jobs:
             /tmp/portfolio.tar.gz \
             ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tmp/portfolio.tar.gz
 
-      # 5. Deploy project to HostSeba
+      # 5. Deploy project
       - name: Deploy project
         if: github.event_name == 'push'
         run: |
@@ -66,6 +66,7 @@ jobs:
              rm -rf .next && \
              tar -xzf /tmp/portfolio.tar.gz -C ${{ secrets.DEPLOY_PATH }} && \
              rm -f /tmp/portfolio.tar.gz && \
+             test -L node_modules && \
              ~/nodevenv/portfolio/20/bin/npm install --prefer-offline --no-audit --no-fund && \
              ~/nodevenv/portfolio/20/bin/npm run build"
 
