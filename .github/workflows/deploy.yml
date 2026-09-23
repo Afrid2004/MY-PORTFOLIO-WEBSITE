@@ -1,0 +1,86 @@
+name: Next.js CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout project
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Build Next.js project
+      - name: Build project
+        run: npm run build
+
+      # 5. Setup SSH
+      - name: Setup SSH
+        if: github.event_name == 'push'
+        run: |
+          mkdir -p ~/.ssh
+
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+
+          chmod 600 ~/.ssh/id_ed25519
+
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} \
+            ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      # 6. Create deployment package
+      - name: Create deployment package
+        if: github.event_name == 'push'
+        run: |
+          tar -czf portfolio.tar.gz \
+            --exclude='./node_modules' \
+            --exclude='./.git' \
+            --exclude='./.env*' \
+            .
+
+      # 7. Upload package to HostSeba
+      - name: Upload to HostSeba
+        if: github.event_name == 'push'
+        run: |
+          scp -P ${{ secrets.SSH_PORT }} \
+            portfolio.tar.gz \
+            ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tmp/portfolio.tar.gz
+
+      # 8. Deploy and install dependencies
+      - name: Deploy to HostSeba
+        if: github.event_name == 'push'
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} \
+            ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
+            "mkdir -p ${{ secrets.DEPLOY_PATH }} && \
+             tar -xzf /tmp/portfolio.tar.gz -C ${{ secrets.DEPLOY_PATH }} && \
+             rm -f /tmp/portfolio.tar.gz && \
+             cd ${{ secrets.DEPLOY_PATH }} && \
+             npm ci --omit=dev"
+
+      # 9. Restart cPanel Node.js application
+      - name: Restart Node.js application
+        if: github.event_name == 'push'
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} \
+            ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
+            "mkdir -p ${{ secrets.DEPLOY_PATH }}/tmp && \
+             touch ${{ secrets.DEPLOY_PATH }}/tmp/restart.txt"
