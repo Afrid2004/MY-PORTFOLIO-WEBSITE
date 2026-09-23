@@ -63,10 +63,10 @@ jobs:
             -p ${{ secrets.SSH_PORT }} \
             ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
             "cd ${{ secrets.DEPLOY_PATH }} && \
-             rm -rf .next node_modules && \
+             rm -rf .next && \
              tar -xzf /tmp/portfolio.tar.gz -C ${{ secrets.DEPLOY_PATH }} && \
              rm -f /tmp/portfolio.tar.gz && \
-             ~/nodevenv/portfolio/20/bin/npm ci && \
+             ~/nodevenv/portfolio/20/bin/npm install --prefer-offline --no-audit --no-fund && \
              ~/nodevenv/portfolio/20/bin/npm run build"
 
       # 6. Restart cPanel Node.js application
