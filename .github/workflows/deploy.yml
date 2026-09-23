@@ -36,6 +36,7 @@ jobs:
         if: github.event_name == 'push'
         run: |
           tar -czf portfolio.tar.gz \
+            --exclude='./portfolio.tar.gz' \
             --exclude='./node_modules' \
             --exclude='./.git' \
             --exclude='./.env*' \
