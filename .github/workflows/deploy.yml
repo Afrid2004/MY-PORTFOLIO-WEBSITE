@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Get the latest code from GitHub
+      # 1. Checkout code
       - name: Checkout code
         uses: actions/checkout@v6
 
@@ -31,8 +31,10 @@ jobs:
         run: npm run build
         env:
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          DB_NAME: ${{ secrets.DB_NAME }}
 
-      # 5. Deploy files to HostSeba using FTP
+      # 5. Deploy to HostSeba
       - name: Deploy to HostSeba
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
