@@ -1,27 +1,19 @@
-const { createServer } = require("http");
-const { parse } = require("url");
-const next = require("next");
+import { createServer } from "http";
+import next from "next";
 
+const port = parseInt(process.env.PORT || "3000", 10);
 const dev = process.env.NODE_ENV !== "production";
-const hostname = "localhost";
-const port = process.env.PORT || 3000;
-
-const app = next({ dev, hostname, port });
+const app = next({ dev });
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
-  createServer(async (req, res) => {
-    try {
-      const parsedUrl = parse(req.url, true);
+  createServer((req, res) => {
+    handle(req, res);
+  }).listen(port);
 
-      await handle(req, res, parsedUrl);
-    } catch (error) {
-      console.error("Error occurred handling", req.url, error);
-
-      res.statusCode = 500;
-      res.end("Internal server error");
-    }
-  }).listen(port, () => {
-    console.log(`> Ready on http://${hostname}:${port}`);
-  });
+  console.log(
+    `> Server listening at http://localhost:${port} as ${
+      dev ? "development" : process.env.NODE_ENV
+    }`,
+  );
 });

@@ -1,90 +1,44 @@
-name: Next.js CI/CD
+name: Deploy Next.js to HostSeba
 
 on:
   push:
     branches:
       - main
 
-  pull_request:
-    branches:
-      - main
-
 jobs:
-  build:
+  deploy:
+    name: Build and Deploy
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Get source code
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      # 2. Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
-      # 3. Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      # 4. Build Next.js
-      - name: Build project
+      - name: Build Next.js
         run: npm run build
-        env:
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
-          DB_NAME: ${{ secrets.DB_NAME }}
 
-      # 5. Setup SSH
-      - name: Setup SSH
-        if: github.event_name == 'push'
-        run: |
-          mkdir -p ~/.ssh
-
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-
-          chmod 600 ~/.ssh/id_ed25519
-
-          ssh-keyscan -p "${{ secrets.SSH_PORT }}" \
-            "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
-
-      # 6. Create deployment archive
-      - name: Create deployment archive
-        if: github.event_name == 'push'
-        run: |
-          tar \
-            --exclude=node_modules \
-            --exclude=.git \
-            --exclude=.github \
-            --exclude=.env \
-            --exclude=.env.local \
-            --exclude=.env.production \
-            -czf /tmp/portfolio.tar.gz .
-
-      # 7. Upload archive to HostSeba
-      - name: Upload to HostSeba
-        if: github.event_name == 'push'
-        run: |
-          scp \
-            -o ServerAliveInterval=30 \
-            -o ServerAliveCountMax=10 \
-            -o ConnectTimeout=30 \
-            -P "${{ secrets.SSH_PORT }}" \
-            /tmp/portfolio.tar.gz \
-            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tmp/portfolio.tar.gz"
-
-      # 8. Deploy on HostSeba
-      - name: Deploy on HostSeba
-        if: github.event_name == 'push'
-        run: |
-          ssh \
-            -o ServerAliveInterval=30 \
-            -o ServerAliveCountMax=10 \
-            -o ConnectTimeout=30 \
-            -p "${{ secrets.SSH_PORT }}" \
-            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" \
-            "cd '${{ secrets.DEPLOY_PATH }}' && \
-             rm -rf .next && \
-             tar -xzf /tmp/portfolio.tar.gz && \
-             rm -f /tmp/portfolio.tar.gz"
+      - name: Deploy to HostSeba
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT }}
+          protocol: ftp
+          server-dir: /
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            .github/**
+            .env
+            .env.*
