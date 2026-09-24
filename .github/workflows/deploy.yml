@@ -60,14 +60,14 @@ jobs:
             --exclude=.env \
             --exclude=.env.local \
             --exclude=.env.production \
-            -czf portfolio.tar.gz .
+            -czf /tmp/portfolio.tar.gz .
 
       # 7. Upload archive
       - name: Upload to HostSeba
         if: github.event_name == 'push'
         run: |
           scp -P "${{ secrets.SSH_PORT }}" \
-            portfolio.tar.gz \
+            /tmp/portfolio.tar.gz \
             "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tmp/portfolio.tar.gz"
 
       # 8. Deploy on HostSeba
