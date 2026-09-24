@@ -1,16 +1,27 @@
 const { createServer } = require("http");
+const { parse } = require("url");
 const next = require("next");
 
-const port = parseInt(process.env.PORT || "3000", 10);
-const dev = false;
+const dev = process.env.NODE_ENV !== "production";
+const hostname = "localhost";
+const port = process.env.PORT || 3000;
 
-const app = next({ dev });
+const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
-  createServer((req, res) => {
-    handle(req, res);
+  createServer(async (req, res) => {
+    try {
+      const parsedUrl = parse(req.url, true);
+
+      await handle(req, res, parsedUrl);
+    } catch (error) {
+      console.error("Error occurred handling", req.url, error);
+
+      res.statusCode = 500;
+      res.end("Internal server error");
+    }
   }).listen(port, () => {
-    console.log(`> Next.js server running on port ${port}`);
+    console.log(`> Ready on http://${hostname}:${port}`);
   });
 });
