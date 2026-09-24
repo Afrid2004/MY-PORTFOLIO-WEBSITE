@@ -32,13 +32,18 @@ jobs:
       # 4. Build Next.js
       - name: Build project
         run: npm run build
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          DB_NAME: ${{ secrets.DB_NAME }}
 
       # 5. Setup SSH
       - name: Setup SSH
         if: github.event_name == 'push'
         run: |
           mkdir -p ~/.ssh
+
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+
           chmod 600 ~/.ssh/id_ed25519
 
           ssh-keyscan -p "${{ secrets.SSH_PORT }}" \
@@ -52,6 +57,9 @@ jobs:
             --exclude=node_modules \
             --exclude=.git \
             --exclude=.github \
+            --exclude=.env \
+            --exclude=.env.local \
+            --exclude=.env.production \
             -czf portfolio.tar.gz .
 
       # 7. Upload archive
@@ -62,7 +70,7 @@ jobs:
             portfolio.tar.gz \
             "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tmp/portfolio.tar.gz"
 
-      # 8. Extract and install dependencies
+      # 8. Deploy on HostSeba
       - name: Deploy on HostSeba
         if: github.event_name == 'push'
         run: |
