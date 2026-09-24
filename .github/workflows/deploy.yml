@@ -10,73 +10,66 @@ on:
       - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout project
+      # 1. Get source code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Setup SSH
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Build Next.js
+      - name: Build project
+        run: npm run build
+
+      # 5. Setup SSH
       - name: Setup SSH
         if: github.event_name == 'push'
         run: |
           mkdir -p ~/.ssh
-
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-
           chmod 600 ~/.ssh/id_ed25519
 
-          ssh-keyscan -p ${{ secrets.SSH_PORT }} \
-            ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -p "${{ secrets.SSH_PORT }}" \
+            "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
-      # 3. Create deployment package
-      - name: Create deployment package
+      # 6. Create deployment archive
+      - name: Create deployment archive
         if: github.event_name == 'push'
         run: |
-          tar -czf /tmp/portfolio.tar.gz \
-            --exclude='./node_modules' \
-            --exclude='./.git' \
-            --exclude='./.env*' \
-            --exclude='./.next' \
-            .
+          tar \
+            --exclude=node_modules \
+            --exclude=.git \
+            --exclude=.github \
+            -czf portfolio.tar.gz .
 
-      # 4. Upload package to HostSeba
-      - name: Upload package to HostSeba
+      # 7. Upload archive
+      - name: Upload to HostSeba
         if: github.event_name == 'push'
         run: |
-          scp \
-            -o ServerAliveInterval=30 \
-            -o ServerAliveCountMax=10 \
-            -P ${{ secrets.SSH_PORT }} \
-            /tmp/portfolio.tar.gz \
-            ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tmp/portfolio.tar.gz
+          scp -P "${{ secrets.SSH_PORT }}" \
+            portfolio.tar.gz \
+            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tmp/portfolio.tar.gz"
 
-      # 5. Deploy project
-      - name: Deploy project
+      # 8. Extract and install dependencies
+      - name: Deploy on HostSeba
         if: github.event_name == 'push'
         run: |
-          ssh \
-            -o ServerAliveInterval=30 \
-            -o ServerAliveCountMax=10 \
-            -p ${{ secrets.SSH_PORT }} \
-            ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
-            "cd ${{ secrets.DEPLOY_PATH }} && \
+          ssh -p "${{ secrets.SSH_PORT }}" \
+            "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}" \
+            "cd '${{ secrets.DEPLOY_PATH }}' && \
              rm -rf .next && \
-             tar -xzf /tmp/portfolio.tar.gz -C ${{ secrets.DEPLOY_PATH }} && \
+             tar -xzf /tmp/portfolio.tar.gz && \
              rm -f /tmp/portfolio.tar.gz && \
-             test -L node_modules && \
-             ~/nodevenv/portfolio/20/bin/npm install --prefer-offline --no-audit --no-fund && \
-             ~/nodevenv/portfolio/20/bin/npm run build"
-
-      # 6. Restart cPanel Node.js application
-      - name: Restart Node.js application
-        if: github.event_name == 'push'
-        run: |
-          ssh \
-            -o ServerAliveInterval=30 \
-            -o ServerAliveCountMax=10 \
-            -p ${{ secrets.SSH_PORT }} \
-            ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
-            "touch ${{ secrets.DEPLOY_PATH }}/tmp/restart.txt"
+             npm ci"
