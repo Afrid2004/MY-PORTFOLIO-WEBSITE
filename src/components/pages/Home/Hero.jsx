@@ -88,7 +88,7 @@ const Hero = () => {
                   <div className="flex items-center flex-wrap md:flex-nowrap gap-2">
                     <MagneticButton className="w-full sm:w-fit">
                       <Link
-                        href="#projects"
+                        href="/projects"
                         className="group inline-flex w-full cursor-pointer items-center justify-center gap-3 rounded-full border-2 border-primary bg-primary px-6 py-3 font-medium text-secondary transition-all duration-300 hover:bg-transparent hover:text-primary sm:w-fit"
                       >
                         <span>View Projects</span>
@@ -104,7 +104,7 @@ const Hero = () => {
                       <Link
                         target="_blank"
                         rel="noopener noreferrer"
-                        href="https://drive.google.com/file/d/1DcyKlqdhYsJgYY2yrdNko55fqumfooUD/view?usp=sharing"
+                        href="https://drive.google.com/file/d/1Zt45h52FKuxtomsxLmsCzBdJYdMwiH5x/view?usp=sharing"
                         className="group inline-flex w-full cursor-pointer items-center justify-center gap-3 rounded-full border-2 border-white/15 bg-transparent px-6 py-3 font-medium text-base-content transition-all duration-300 hover:border-primary hover:text-primary sm:w-fit"
                       >
                         <FiDownload

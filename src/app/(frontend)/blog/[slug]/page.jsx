@@ -18,16 +18,12 @@ import {
 
 const getBlog = async (slug) => {
   try {
-    // 5 seconds delay
-    await new Promise((resolve) => {
-      setTimeout(resolve, 5000);
-    });
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
     const res = await fetch(`${baseUrl}/api/blog/${encodeURIComponent(slug)}`, {
       next: {
-        revalidate: 60
-      }
+        revalidate: 60,
+      },
     });
 
     if (!res.ok) {
@@ -57,10 +53,13 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const baseUrl = "https://faisalfreelancer.com";
 
   const canonicalUrl = `${baseUrl}/blog/${blog.slug}`;
-  const imageUrl = blog.image || `${baseUrl}/og-image.jpg`;
+
+  const imageUrl =
+    blog.image ||
+    "https://pub-34bcafdece07465c8d280278b20ecf5b.r2.dev/seo/blogs.png";
 
   const title = blog.title;
 
@@ -77,13 +76,13 @@ export async function generateMetadata({ params }) {
 
     authors: [
       {
-        name: "MD Faisal Yousuf Afrid",
+        name: "Muhammed Faisal Yousuf Afrid",
+        url: baseUrl,
       },
     ],
 
-    creator: "MD Faisal Yousuf Afrid",
-
-    publisher: "MD Faisal Yousuf Afrid",
+    creator: "Muhammed Faisal Yousuf Afrid",
+    publisher: "Muhammed Faisal Yousuf Afrid",
 
     alternates: {
       canonical: canonicalUrl,
@@ -98,7 +97,7 @@ export async function generateMetadata({ params }) {
       title,
       description,
       url: canonicalUrl,
-      siteName: "MD Faisal Yousuf Afrid",
+      siteName: "Muhammed Faisal Yousuf Afrid",
       type: "article",
 
       publishedTime: blog.publishedAt
@@ -109,7 +108,7 @@ export async function generateMetadata({ params }) {
         ? new Date(blog.updatedAt).toISOString()
         : undefined,
 
-      authors: ["MD Faisal Yousuf Afrid"],
+      authors: ["Muhammed Faisal Yousuf Afrid"],
 
       section: blog.category,
 
@@ -130,7 +129,6 @@ export async function generateMetadata({ params }) {
       title,
       description,
       images: [imageUrl],
-      creator: "@yourusername",
     },
   };
 }
@@ -157,7 +155,6 @@ const BlogDetails = async ({ params }) => {
   return (
     <main className="relative py-12 md:py-16 lg:py-20 overflow-x-clip">
       <div className="container relative z-10">
-
         {/* Article Header */}
         <header className="mx-auto mb-12 max-w-5xl mt-15 text-center md:mb-16">
           {/* Category */}
@@ -195,7 +192,7 @@ const BlogDetails = async ({ params }) => {
           </div>
         </header>
 
-        <div >
+        <div>
           <div className="grid grid-cols-12 items-start gap-8 lg:gap-10">
             <div className="col-span-12 lg:col-span-8">
               {/* Featured Image */}
