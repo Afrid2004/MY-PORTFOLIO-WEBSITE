@@ -8,9 +8,7 @@ export async function GET() {
     const projectCollection = await dbConnect(collections.projects);
 
     const result = await projectCollection
-      .find({
-        status: true,
-      })
+      .find()
       .sort({
         order: 1,
         createdAt: 1,
