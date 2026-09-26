@@ -23,6 +23,29 @@ const ContactModal = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Reset form and close modal
+  const handleClose = () => {
+    if (loading) return;
+
+    setFormData({
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
+    });
+
+    setAttachments([]);
+    setError("");
+
+    const fileInput = document.getElementById("contact-attachment");
+
+    if (fileInput) {
+      fileInput.value = "";
+    }
+
+    onClose();
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -42,12 +65,15 @@ const ContactModal = ({ isOpen, onClose }) => {
       return;
     }
 
+    // Maximum 5 MB per file
     const invalidFile = files.find((file) => file.size > 5 * 1024 * 1024);
 
     if (invalidFile) {
       setError(`"${invalidFile.name}" must be less than 5 MB.`);
+
       e.target.value = "";
       setAttachments([]);
+
       return;
     }
 
@@ -69,6 +95,7 @@ const ContactModal = ({ isOpen, onClose }) => {
       data.append("subject", formData.subject);
       data.append("message", formData.message);
 
+      // Add multiple attachments
       attachments.forEach((file) => {
         data.append("attachments", file);
       });
@@ -84,7 +111,7 @@ const ContactModal = ({ isOpen, onClose }) => {
         throw new Error(result.message || "Failed to send message.");
       }
 
-      // Reset form
+      // Reset form after successful submission
       setFormData({
         name: "",
         email: "",
@@ -93,7 +120,9 @@ const ContactModal = ({ isOpen, onClose }) => {
       });
 
       setAttachments([]);
+      setError("");
 
+      // Reset file input
       const fileInput = document.getElementById("contact-attachment");
 
       if (fileInput) {
@@ -122,7 +151,7 @@ const ContactModal = ({ isOpen, onClose }) => {
 
   return (
     <div
-      onClick={onClose}
+      onClick={handleClose}
       className={`fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm transition-all duration-200 ${
         isOpen
           ? "pointer-events-auto opacity-100"
@@ -147,7 +176,7 @@ const ContactModal = ({ isOpen, onClose }) => {
 
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             disabled={loading}
             className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-base-content/40 transition-colors hover:bg-base-content/5 hover:text-base-content disabled:cursor-not-allowed disabled:opacity-50"
           >
@@ -323,7 +352,7 @@ const ContactModal = ({ isOpen, onClose }) => {
             <div className="flex items-center justify-end gap-2 border-t border-base-content/10 pt-5">
               <button
                 type="button"
-                onClick={onClose}
+                onClick={handleClose}
                 disabled={loading}
                 className="cursor-pointer rounded-lg border border-base-content/10 px-4 py-2.5 text-sm text-base-content/55 transition-colors hover:bg-base-content/5 hover:text-base-content disabled:cursor-not-allowed disabled:opacity-50"
               >
