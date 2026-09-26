@@ -62,7 +62,9 @@ const Navbar = () => {
         viewport={0}
       >
         <li>
-          <NavLink href="/">Home</NavLink>
+          <NavLink href="/" onClick={() => setMenu(false)}>
+            Home
+          </NavLink>
         </li>
       </Reveal>
 
@@ -73,7 +75,9 @@ const Navbar = () => {
         viewport={0}
       >
         <li>
-          <NavLink href="/#about">About</NavLink>
+          <NavLink href="/#about" onClick={() => setMenu(false)}>
+            About
+          </NavLink>
         </li>
       </Reveal>
 
@@ -84,7 +88,9 @@ const Navbar = () => {
         viewport={0}
       >
         <li>
-          <NavLink href="/#services">Services</NavLink>
+          <NavLink href="/#services" onClick={() => setMenu(false)}>
+            Services
+          </NavLink>
         </li>
       </Reveal>
 
@@ -95,7 +101,9 @@ const Navbar = () => {
         viewport={0}
       >
         <li>
-          <NavLink href="/projects">Projects</NavLink>
+          <NavLink href="/projects" onClick={() => setMenu(false)}>
+            Projects
+          </NavLink>
         </li>
       </Reveal>
 
@@ -106,7 +114,9 @@ const Navbar = () => {
         viewport={0}
       >
         <li>
-          <NavLink href="/blogs">Blogs</NavLink>
+          <NavLink href="/blogs" onClick={() => setMenu(false)}>
+            Blogs
+          </NavLink>
         </li>
       </Reveal>
 
@@ -117,7 +127,9 @@ const Navbar = () => {
         viewport={0}
       >
         <li>
-          <NavLink href="/#contact">Contact</NavLink>
+          <NavLink href="/#contact" onClick={() => setMenu(false)}>
+            Contact
+          </NavLink>
         </li>
       </Reveal>
     </>
