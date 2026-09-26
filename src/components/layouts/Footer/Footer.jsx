@@ -4,14 +4,16 @@ import BookMeeting from "@/components/Buttons/BookMeeting";
 import Logo from "@/components/Logo/Logo";
 import Image from "next/image";
 import Link from "next/link";
-import { FaGithub, FaLinkedin, FaFacebook, FaArrowUp } from "react-icons/fa6";
+import { FaArrowUp } from "react-icons/fa6";
 import { FiArrowRight, FiChevronRight, FiMail } from "react-icons/fi";
-import { HiOutlineEnvelope } from "react-icons/hi2";
 import MagneticButton from "@/components/Buttons/MagneticButton";
 import Reveal from "@/components/Reavel/Reavel";
 import SocialLoader from "@/components/Social/SocialLoader";
+import ContactModal from "@/components/Modal/ContactModal";
+import { useState } from "react";
 
 const Footer = () => {
+  const [isContactOpen, setIsContactOpen] = useState(false);
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -73,13 +75,14 @@ const Footer = () => {
                   </MagneticButton>
 
                   <MagneticButton className="w-full sm:w-fit">
-                    <Link
-                      href="mailto:mdfaisalafrid@gmail.com"
+                    <button
+                      type="button"
+                      onClick={() => setIsContactOpen(true)}
                       className="inline-flex items-center gap-3 rounded-full border-2 border-white/15 bg-transparent px-6 py-4 font-medium text-base-content transition-all h-full duration-300 hover:border-primary hover:text-primary cursor-pointer w-full justify-center sm:w-fit"
                     >
                       <FiMail size={17} />
                       <span className="leading-none">Contact Me</span>
-                    </Link>
+                    </button>
                   </MagneticButton>
                 </div>
               </Reveal>
@@ -268,6 +271,11 @@ const Footer = () => {
           </div>
         </div>
       </div>
+
+      <ContactModal
+        isOpen={isContactOpen}
+        onClose={() => setIsContactOpen(false)}
+      />
     </footer>
   );
 };
