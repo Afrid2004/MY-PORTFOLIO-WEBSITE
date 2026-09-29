@@ -2,10 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 
-import {
-  FaGithub,
-  FaExternalLinkAlt,
-} from "react-icons/fa";
+import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 
 import Image from "next/image";
 
@@ -57,12 +54,7 @@ const Projects = () => {
   // Show latest 4 projects on home page
   const displayedProjects = filteredProjects.slice(0, 4);
 
-  const delays = [
-    "delay-0",
-    "delay-[100ms]",
-    "delay-[200ms]",
-    "delay-[300ms]",
-  ];
+  const delays = ["delay-0", "delay-[100ms]", "delay-[200ms]", "delay-[300ms]"];
 
   // Check if more projects are available
   const hasMoreProjects = filteredProjects.length > 4;
@@ -79,10 +71,7 @@ const Projects = () => {
   };
 
   return (
-    <section
-      id="projects"
-      className="relative overflow-x-clip py-20"
-    >
+    <section id="projects" className="relative overflow-x-clip py-20">
       <div className="container relative z-10">
         {/* Section Header */}
         <Reveal
@@ -115,8 +104,7 @@ const Projects = () => {
             viewport={0.2}
           >
             <h2 className="mt-6 text-4xl font-semibold leading-tight md:text-5xl lg:text-6xl">
-              Things I've{" "}
-              <span className="text-primary">Built</span>
+              Things I've <span className="text-primary">Built</span>
             </h2>
           </Reveal>
 
@@ -127,8 +115,8 @@ const Projects = () => {
             viewport={0.2}
           >
             <p className="mt-5 text-base leading-8 text-base-content/60">
-              A collection of projects I've built while learning,
-              experimenting, and solving real world problems.
+              A collection of projects I've built while learning, experimenting,
+              and solving real world problems.
             </p>
           </Reveal>
         </Reveal>
@@ -158,9 +146,7 @@ const Projects = () => {
                   <span className="absolute inset-0 rounded-full border-2 border-white/15 transition-colors duration-300 hover:border-primary/40" />
                 )}
 
-                <span className="relative z-10">
-                  {category}
-                </span>
+                <span className="relative z-10">{category}</span>
               </button>
             ))}
           </div>
@@ -172,15 +158,10 @@ const Projects = () => {
             <ProjectSkeleton />
           ) : displayedProjects.length === 0 ? (
             <div className="py-10 text-center">
-              <p className="text-sm text-base-content/50">
-                No projects found.
-              </p>
+              <p className="text-sm text-base-content/50">No projects found.</p>
             </div>
           ) : (
-            <div
-              key={filter}
-              className="grid grid-cols-1 gap-6 lg:grid-cols-2"
-            >
+            <div key={filter} className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {displayedProjects.map((project, idx) => (
                 <Reveal
                   key={project._id}
@@ -221,8 +202,6 @@ const Projects = () => {
                         </span>
                       </div>
 
-                      
-
                       {/* Live Icon */}
                       {project.liveUrl && (
                         <div className="absolute bottom-4 right-4">
@@ -257,29 +236,31 @@ const Projects = () => {
                       </p>
 
                       {/* Technologies */}
-                      <div className="mt-5 flex flex-wrap gap-2">
-                        {project.technologies?.map((tech) => {
-                          const TechIcon = getIcon(tech.icon);
+                      {project.technologies?.length > 0 && (
+                        <div className="mt-5 flex flex-wrap gap-2">
+                          {project.technologies.map((technology, index) => {
+                            const TechIcon = getIcon(technology.icon);
 
-                          return (
-                            <span
-                              key={tech.name}
-                              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/3 px-3 py-1.5 text-xs font-medium text-base-content/70 transition-colors duration-300 group-hover:border-white/15"
-                            >
-                              {TechIcon && (
-                                <TechIcon
-                                  style={{
-                                    color: tech.color || undefined,
-                                  }}
-                                  className="text-sm"
-                                />
-                              )}
+                            return (
+                              <span
+                                key={technology.name || index}
+                                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.02] px-2.5 py-1 text-[11px] text-base-content/45 transition-colors duration-300 hover:border-white/15"
+                              >
+                                {TechIcon && (
+                                  <TechIcon
+                                    style={{
+                                      color: technology.color || undefined,
+                                    }}
+                                    className="text-sm"
+                                  />
+                                )}
 
-                              {tech.name}
-                            </span>
-                          );
-                        })}
-                      </div>
+                                {technology.name}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      )}
 
                       <div className="my-6 h-px bg-white/10" />
 
@@ -366,4 +347,3 @@ const Projects = () => {
 };
 
 export default Projects;
-

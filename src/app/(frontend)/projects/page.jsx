@@ -6,6 +6,7 @@ import Link from "next/link";
 import { FiArrowUpRight, FiGithub, FiSearch, FiX } from "react-icons/fi";
 import Reveal from "@/components/Reavel/Reavel";
 import ProjectsSkeleton from "./ProjectsSkeleton";
+import { getIcon } from "@/lib/iconLoader";
 
 const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);
@@ -218,14 +219,27 @@ const ProjectsPage = () => {
                         {/* Technologies */}
                         {project.technologies?.length > 0 && (
                           <div className="mt-5 flex flex-wrap gap-2">
-                            {project.technologies.map((technology, index) => (
-                              <span
-                                key={index}
-                                className="rounded-full border border-white/10 bg-white/[0.02] px-2.5 py-1 text-[11px] text-base-content/45"
-                              >
-                                {technology.name}
-                              </span>
-                            ))}
+                            {project.technologies.map((technology, index) => {
+                              const TechIcon = getIcon(technology.icon);
+
+                              return (
+                                <span
+                                  key={technology.name || index}
+                                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.02] px-2.5 py-1 text-[11px] text-base-content/45 transition-colors duration-300 hover:border-white/15"
+                                >
+                                  {TechIcon && (
+                                    <TechIcon
+                                      style={{
+                                        color: technology.color || undefined,
+                                      }}
+                                      className="text-sm"
+                                    />
+                                  )}
+
+                                  {technology.name}
+                                </span>
+                              );
+                            })}
                           </div>
                         )}
 
@@ -236,7 +250,8 @@ const ProjectsPage = () => {
 
                         {/* Actions */}
                         <div className="mt-auto flex items-center gap-3 pt-5">
-                          {project.liveUrl && (
+                          {/* Live Demo / Coming Soon */}
+                          {project.liveUrl ? (
                             <Link
                               href={project.liveUrl}
                               target="_blank"
@@ -248,8 +263,17 @@ const ProjectsPage = () => {
                               Live Demo
                               <FiArrowUpRight size={16} />
                             </Link>
+                          ) : (
+                            <span
+                              className={`inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm font-medium text-base-content/70 transition-all duration-300 hover:border-primary/20 hover:text-primary ${
+                                project.githubUrl ? "flex-1" : "w-full"
+                              }`}
+                            >
+                              Coming Soon
+                            </span>
                           )}
 
+                          {/* GitHub */}
                           {project.githubUrl && (
                             <Link
                               href={project.githubUrl}
